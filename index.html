@@ -280,20 +280,22 @@
 
     /* ---- Topo ---- */
     .barra-topo{padding-bottom:10px;}
-    .titulo-app{font-size:16px;}
+    .titulo-app{font-size:18px;}
+    .titulo-app small{font-size:12.5px;}
     .topo-direita{width:100%;justify-content:flex-start;gap:8px;}
-    .topo-direita .botao{padding:9px 12px;font-size:12px;flex:1 1 auto;text-align:center;}
-    .online-lista{order:5;width:100%;}
+    .topo-direita .botao{padding:11px 12px;font-size:13.5px;flex:1 1 auto;text-align:center;}
+    .online-lista{order:5;width:100%;font-size:13.5px;}
 
     /* ---- Resumo ---- */
     .resumo{grid-template-columns:repeat(2,1fr);}
-    .resumo .item .num{font-size:22px;}
+    .resumo .item .num{font-size:24px;}
+    .resumo .item .lbl{font-size:12px;}
 
     /* ---- Ações do rodapé em botões grandes e empilhados ---- */
     .rodape-acoes{flex-direction:column;align-items:stretch;gap:10px;}
     .rodape-acoes > div{display:grid!important;grid-template-columns:1fr 1fr;gap:8px;}
-    .rodape-acoes .botao{padding:12px 10px;font-size:12px;text-align:center;}
-    .aviso-sync{text-align:center;}
+    .rodape-acoes .botao{padding:13px 10px;font-size:13.5px;text-align:center;}
+    .aviso-sync{text-align:center;font-size:13px;}
 
     /* ---- Tabela "Cargas no Piso" vira lista de cartões (fonte maior) ---- */
     .caixa-tabela{overflow-x:visible;border:none;background:transparent;}
@@ -309,34 +311,34 @@
     }
     #tabela-cargas tbody td{
       display:flex;align-items:center;justify-content:space-between;gap:12px;
-      border-bottom:1px dashed var(--linha);padding:12px 0;
-      font-size:15.5px;order:20;
+      border-bottom:1px dashed var(--linha);padding:14px 0;
+      font-size:17.5px;order:20;
     }
     #tabela-cargas tbody td:last-child{border-bottom:none;}
     #tabela-cargas tbody td::before{
       content:attr(data-label);
-      font-family:var(--disp);font-size:11.5px;letter-spacing:1px;text-transform:uppercase;
+      font-family:var(--disp);font-size:13.5px;letter-spacing:1px;text-transform:uppercase;
       color:var(--texto-fraco);flex:0 0 auto;
     }
-    #tabela-cargas tbody td .cel{width:auto;flex:1 1 auto;text-align:right;font-size:15.5px;padding:6px 4px;}
-    #tabela-cargas tbody td.col-num .cel{text-align:right;font-size:16px;}
-    #tabela-cargas tbody td select.cel{text-align:right;direction:rtl;font-size:14.5px;}
+    #tabela-cargas tbody td .cel{width:auto;flex:1 1 auto;text-align:right;font-size:17.5px;padding:6px 4px;}
+    #tabela-cargas tbody td.col-num .cel{text-align:right;font-size:18px;}
+    #tabela-cargas tbody td select.cel{text-align:right;direction:rtl;font-size:16.5px;}
 
     /* Carga e Fornecedor viram o "cabeçalho" do cartão, em destaque */
     #tabela-cargas tbody td[data-label="Carga"]{
       order:1;border-bottom:none;padding:0 0 6px;
     }
-    #tabela-cargas tbody td[data-label="Carga"]::before{font-size:11px;}
+    #tabela-cargas tbody td[data-label="Carga"]::before{font-size:12.5px;}
     #tabela-cargas tbody td[data-label="Carga"] .cel{
-      font-size:23px;font-weight:700;color:var(--faixa);font-family:var(--mono);text-align:right;
+      font-size:26px;font-weight:700;color:var(--faixa);font-family:var(--mono);text-align:right;
     }
     #tabela-cargas tbody td[data-label="Fornecedor"]{
       order:2;flex-direction:column;align-items:flex-start;gap:2px;
       padding:0 0 12px;margin-bottom:8px;border-bottom:1px solid var(--linha);
     }
-    #tabela-cargas tbody td[data-label="Fornecedor"]::before{font-size:10.5px;}
+    #tabela-cargas tbody td[data-label="Fornecedor"]::before{font-size:12px;}
     #tabela-cargas tbody td[data-label="Fornecedor"] .cel{
-      font-size:16.5px;font-weight:600;text-align:left;color:var(--texto);width:100%;padding:2px 0 0;
+      font-size:18.5px;font-weight:600;text-align:left;color:var(--texto);width:100%;padding:2px 0 0;
     }
 
     /* Status em destaque, seletor grande e fácil de tocar */
@@ -344,14 +346,14 @@
       order:3;flex-direction:column;align-items:stretch;gap:6px;padding:12px 0;
     }
     #tabela-cargas tbody td[data-label="Status"] select.cel{
-      font-size:15px;padding:12px 10px;text-align:left;direction:ltr;font-weight:700;width:100%;
+      font-size:17px;padding:13px 10px;text-align:left;direction:ltr;font-weight:700;width:100%;
     }
 
     /* Observação: texto livre, fica embaixo e por extenso */
     #tabela-cargas tbody td[data-label="Obs."]{
       order:19;flex-direction:column;align-items:flex-start;gap:4px;
     }
-    #tabela-cargas tbody td[data-label="Obs."] .cel{text-align:left;font-size:14.5px;width:100%;}
+    #tabela-cargas tbody td[data-label="Obs."] .cel{text-align:left;font-size:16.5px;width:100%;}
 
     #tabela-cargas tbody td[data-label="Produtivo"]{order:4;}
     #tabela-cargas tbody td[data-label="Doca"]{order:5;}
@@ -374,22 +376,22 @@
     /* ---- Seleção de Cargas — Distribuição vira cartão (fonte maior) ---- */
     .cabecalho-selecao{display:none;}
     .linha-selecao{
-      display:grid;grid-template-columns:1fr 1fr;gap:8px 14px;
-      padding:16px;position:relative;font-size:15px;
+      display:grid;grid-template-columns:1fr 1fr;gap:9px 14px;
+      padding:16px;position:relative;font-size:17px;
       border-radius:6px;margin-bottom:2px;
     }
     .linha-selecao .campo-doca, .linha-selecao .campo-carga,
-    .linha-selecao .campo-volume, .linha-selecao .campo-sku{font-size:15.5px;}
-    .linha-selecao .campo-doca::before{content:"Doca ";color:var(--texto-fraco);font-size:10.5px;text-transform:uppercase;}
-    .linha-selecao .campo-carga::before{content:"Carga ";color:var(--texto-fraco);font-size:10.5px;text-transform:uppercase;}
-    .linha-selecao .campo-volume::before{content:"Vol ";color:var(--texto-fraco);font-size:10.5px;text-transform:uppercase;}
-    .linha-selecao .campo-sku::before{content:"SKU ";color:var(--texto-fraco);font-size:10.5px;text-transform:uppercase;}
-    .linha-selecao .campo-carga{font-size:17px;font-weight:700;color:var(--faixa);font-family:var(--mono);}
-    .linha-selecao .campo-fornecedor{grid-column:1 / -1;font-weight:600;font-size:16px;}
-    .linha-selecao .campo-status{grid-column:1 / -1;font-size:13px;margin-top:2px;}
+    .linha-selecao .campo-volume, .linha-selecao .campo-sku{font-size:17px;}
+    .linha-selecao .campo-doca::before{content:"Doca ";color:var(--texto-fraco);font-size:12px;text-transform:uppercase;}
+    .linha-selecao .campo-carga::before{content:"Carga ";color:var(--texto-fraco);font-size:12px;text-transform:uppercase;}
+    .linha-selecao .campo-volume::before{content:"Vol ";color:var(--texto-fraco);font-size:12px;text-transform:uppercase;}
+    .linha-selecao .campo-sku::before{content:"SKU ";color:var(--texto-fraco);font-size:12px;text-transform:uppercase;}
+    .linha-selecao .campo-carga{font-size:19px;font-weight:700;color:var(--faixa);font-family:var(--mono);}
+    .linha-selecao .campo-fornecedor{grid-column:1 / -1;font-weight:600;font-size:18px;}
+    .linha-selecao .campo-status{grid-column:1 / -1;font-size:15px;margin-top:2px;}
     .linha-selecao .bloco-circulo{grid-column:1 / -1;justify-content:flex-start;margin-top:8px;gap:10px;}
-    .linha-selecao .circulo-dist{width:34px;height:34px;}
-    .linha-selecao .hora-marcada{font-size:13px;}
+    .linha-selecao .circulo-dist{width:36px;height:36px;}
+    .linha-selecao .hora-marcada{font-size:14.5px;}
 
     /* ---- Configuração de turno em coluna única ---- */
     .linha-config{flex-direction:column;align-items:stretch;gap:10px;}
@@ -397,18 +399,38 @@
 
     /* ---- Grade de distribuição: mantém rolagem lateral, com dica ---- */
     .grade-wrap{position:relative;-webkit-overflow-scrolling:touch;}
-    .grade-cabecalho{font-size:12px;}
+    .grade-cabecalho{font-size:14px;}
+    .grade-cabecalho .data-hora{font-size:13px;}
     .grade-cabecalho::after{
       content:"◂ arraste para o lado ▸";
       display:block;width:100%;font-family:'Inter',sans-serif;font-weight:400;
-      font-size:10px;letter-spacing:0.3px;color:#cfd6e8;text-transform:none;opacity:.8;
+      font-size:11.5px;letter-spacing:0.3px;color:#cfd6e8;text-transform:none;opacity:.8;
     }
-    table.grade{font-size:11px;}
+    table.grade{font-size:14px;min-width:1080px;}
+    table.grade th, table.grade td{padding:9px 10px;}
+    table.grade thead th{font-size:12px;}
+    table.grade input.painel-input{font-size:14px;width:78px;}
 
     .rodape-grade{flex-direction:column;}
-    .rodape-grade .botao{width:100%;text-align:center;}
+    .rodape-grade .botao{width:100%;text-align:center;padding:13px 10px;font-size:13.5px;}
 
-    .secao-titulo{margin:26px 0 10px;font-size:14px;}
+    .secao-titulo{margin:26px 0 10px;font-size:16px;}
+
+    /* ---- Login ---- */
+    .cartao-login{width:90vw;max-width:360px;padding:36px 26px 28px;}
+    .cartao-login h1{font-size:24px;}
+    .cartao-login .rotulo{font-size:13px;}
+    .campo label{font-size:13px;}
+    .campo input{font-size:17px;padding:13px 12px;}
+    #btn-entrar{font-size:15px;padding:14px;}
+    #erro-login{font-size:14px;}
+
+    /* ---- Modal colar planilha ---- */
+    .modal-caixa{padding:22px 20px 20px;}
+    .modal-caixa h2{font-size:17px;}
+    .modal-texto{font-size:14px;}
+    #area-colar{font-size:14.5px;}
+    .modal-botoes .botao{padding:12px 14px;font-size:13.5px;}
   }
 
   /* ===================== MODAL COLAR PLANILHA ===================== */
