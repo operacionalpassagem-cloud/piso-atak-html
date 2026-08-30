@@ -197,6 +197,7 @@
   }
 
   /* ===================== TABELA ===================== */
+  .dica-scroll-mobile{display:none;}
   .caixa-tabela{
     background:var(--painel);
     border:1px solid var(--linha);
@@ -251,6 +252,7 @@
   .status-etiquetada{background:var(--ok-bg)!important;color:#7de3a4!important;}
   .status-processo{background:var(--alerta-bg)!important;color:#f0c674!important;}
   .status-pendente{background:var(--pendente-bg)!important;color:#f19b9b!important;}
+  .status-parcial{background:#1c2c3d!important;color:#8ec9f0!important;}
 
   tfoot td{
     font-family:var(--mono);
@@ -272,7 +274,7 @@
     .caixa-tabela{border:1px solid #000;}
     thead th{background:#eee!important;color:#000!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
     td .cel, td select.cel{color:#000!important;}
-    .status-etiquetada,.status-processo,.status-pendente{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    .status-etiquetada,.status-processo,.status-pendente,.status-parcial{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
   }
 
   @media (max-width:760px){
@@ -280,118 +282,53 @@
 
     /* ---- Topo ---- */
     .barra-topo{padding-bottom:10px;}
-    .titulo-app{font-size:18px;}
-    .titulo-app small{font-size:12.5px;}
+    .titulo-app{font-size:16px;}
     .topo-direita{width:100%;justify-content:flex-start;gap:8px;}
-    .topo-direita .botao{padding:11px 12px;font-size:13.5px;flex:1 1 auto;text-align:center;}
-    .online-lista{order:5;width:100%;font-size:13.5px;}
+    .topo-direita .botao{padding:9px 12px;font-size:12px;flex:1 1 auto;text-align:center;}
+    .online-lista{order:5;width:100%;}
 
     /* ---- Resumo ---- */
     .resumo{grid-template-columns:repeat(2,1fr);}
-    .resumo .item .num{font-size:24px;}
-    .resumo .item .lbl{font-size:12px;}
+    .resumo .item .num{font-size:22px;}
 
     /* ---- Ações do rodapé em botões grandes e empilhados ---- */
     .rodape-acoes{flex-direction:column;align-items:stretch;gap:10px;}
     .rodape-acoes > div{display:grid!important;grid-template-columns:1fr 1fr;gap:8px;}
-    .rodape-acoes .botao{padding:13px 10px;font-size:13.5px;text-align:center;}
-    .aviso-sync{text-align:center;font-size:13px;}
+    .rodape-acoes .botao{padding:12px 10px;font-size:12px;text-align:center;}
+    .aviso-sync{text-align:center;}
 
-    /* ---- Tabela "Cargas no Piso" vira lista de cartões (fonte maior) ---- */
-    .caixa-tabela{overflow-x:visible;border:none;background:transparent;}
-    table#tabela-cargas{min-width:0;}
-    #tabela-cargas thead{display:none;}
-    #tabela-cargas tfoot{display:none;}
-    #tabela-cargas, #tabela-cargas tbody{display:block;width:100%;}
-    #tabela-cargas tbody tr{
-      display:flex;flex-direction:column;position:relative;
-      background:var(--painel);border:1px solid var(--linha);border-left:4px solid var(--faixa);
-      border-radius:6px;margin-bottom:16px;padding:16px 16px 6px;
-      box-shadow:0 3px 12px rgba(0,0,0,.3);
+    /* ---- Tabela "Cargas no Piso": continua tabela de verdade, igual ao
+       computador — só ganha rolagem lateral por causa da largura ---- */
+    .dica-scroll-mobile{
+      display:block;text-align:center;font-size:11px;color:var(--texto-fraco);
+      letter-spacing:0.5px;margin:0 0 6px;
     }
-    #tabela-cargas tbody td{
-      display:flex;align-items:center;justify-content:space-between;gap:12px;
-      border-bottom:1px dashed var(--linha);padding:14px 0;
-      font-size:17.5px;order:20;
-    }
-    #tabela-cargas tbody td:last-child{border-bottom:none;}
-    #tabela-cargas tbody td::before{
-      content:attr(data-label);
-      font-family:var(--disp);font-size:13.5px;letter-spacing:1px;text-transform:uppercase;
-      color:var(--texto-fraco);flex:0 0 auto;
-    }
-    #tabela-cargas tbody td .cel{width:auto;flex:1 1 auto;text-align:right;font-size:17.5px;padding:6px 4px;}
-    #tabela-cargas tbody td.col-num .cel{text-align:right;font-size:18px;}
-    #tabela-cargas tbody td select.cel{text-align:right;direction:rtl;font-size:16.5px;}
-
-    /* Carga e Fornecedor viram o "cabeçalho" do cartão, em destaque */
-    #tabela-cargas tbody td[data-label="Carga"]{
-      order:1;border-bottom:none;padding:0 0 6px;
-    }
-    #tabela-cargas tbody td[data-label="Carga"]::before{font-size:12.5px;}
-    #tabela-cargas tbody td[data-label="Carga"] .cel{
-      font-size:26px;font-weight:700;color:var(--faixa);font-family:var(--mono);text-align:right;
-    }
-    #tabela-cargas tbody td[data-label="Fornecedor"]{
-      order:2;flex-direction:column;align-items:flex-start;gap:2px;
-      padding:0 0 12px;margin-bottom:8px;border-bottom:1px solid var(--linha);
-    }
-    #tabela-cargas tbody td[data-label="Fornecedor"]::before{font-size:12px;}
-    #tabela-cargas tbody td[data-label="Fornecedor"] .cel{
-      font-size:18.5px;font-weight:600;text-align:left;color:var(--texto);width:100%;padding:2px 0 0;
-    }
-
-    /* Status em destaque, seletor grande e fácil de tocar */
-    #tabela-cargas tbody td[data-label="Status"]{
-      order:3;flex-direction:column;align-items:stretch;gap:6px;padding:12px 0;
-    }
-    #tabela-cargas tbody td[data-label="Status"] select.cel{
-      font-size:17px;padding:13px 10px;text-align:left;direction:ltr;font-weight:700;width:100%;
-    }
-
-    /* Observação: texto livre, fica embaixo e por extenso */
-    #tabela-cargas tbody td[data-label="Obs."]{
-      order:19;flex-direction:column;align-items:flex-start;gap:4px;
-    }
-    #tabela-cargas tbody td[data-label="Obs."] .cel{text-align:left;font-size:16.5px;width:100%;}
-
-    #tabela-cargas tbody td[data-label="Produtivo"]{order:4;}
-    #tabela-cargas tbody td[data-label="Doca"]{order:5;}
-    #tabela-cargas tbody td[data-label="Liberação"]{order:6;}
-    #tabela-cargas tbody td[data-label="Hora"]{order:7;}
-    #tabela-cargas tbody td[data-label="D-1"]{order:8;}
-    #tabela-cargas tbody td[data-label="Volume"]{order:9;}
-    #tabela-cargas tbody td[data-label="SKU"]{order:10;}
-    #tabela-cargas tbody td[data-label="Departamento"]{order:11;}
-
-    #tabela-cargas tbody td.col-remover{
-      order:0;position:absolute;top:10px;right:10px;border-bottom:none;padding:0;width:auto;
-    }
-    #tabela-cargas tbody td.col-remover::before{display:none;}
-    #tabela-cargas tbody .btn-remover{
-      width:30px;height:30px;border-radius:50%;background:var(--asfalto-2);
-      border:1px solid var(--linha);font-size:15px;
-    }
+    .caixa-tabela{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--linha);}
+    table#tabela-cargas{min-width:1150px;font-size:12px;}
+    #tabela-cargas th, #tabela-cargas td{padding:7px 8px;}
+    #tabela-cargas td .cel{font-size:12.5px;padding:6px 5px;}
+    #tabela-cargas td select.cel{font-size:11.5px;}
+    #tabela-cargas .btn-remover{width:26px;height:26px;font-size:13px;}
 
     /* ---- Seleção de Cargas — Distribuição vira cartão (fonte maior) ---- */
     .cabecalho-selecao{display:none;}
     .linha-selecao{
-      display:grid;grid-template-columns:1fr 1fr;gap:9px 14px;
-      padding:16px;position:relative;font-size:17px;
+      display:grid;grid-template-columns:1fr 1fr;gap:8px 14px;
+      padding:16px;position:relative;font-size:15px;
       border-radius:6px;margin-bottom:2px;
     }
     .linha-selecao .campo-doca, .linha-selecao .campo-carga,
-    .linha-selecao .campo-volume, .linha-selecao .campo-sku{font-size:17px;}
-    .linha-selecao .campo-doca::before{content:"Doca ";color:var(--texto-fraco);font-size:12px;text-transform:uppercase;}
-    .linha-selecao .campo-carga::before{content:"Carga ";color:var(--texto-fraco);font-size:12px;text-transform:uppercase;}
-    .linha-selecao .campo-volume::before{content:"Vol ";color:var(--texto-fraco);font-size:12px;text-transform:uppercase;}
-    .linha-selecao .campo-sku::before{content:"SKU ";color:var(--texto-fraco);font-size:12px;text-transform:uppercase;}
-    .linha-selecao .campo-carga{font-size:19px;font-weight:700;color:var(--faixa);font-family:var(--mono);}
-    .linha-selecao .campo-fornecedor{grid-column:1 / -1;font-weight:600;font-size:18px;}
-    .linha-selecao .campo-status{grid-column:1 / -1;font-size:15px;margin-top:2px;}
+    .linha-selecao .campo-volume, .linha-selecao .campo-sku{font-size:15.5px;}
+    .linha-selecao .campo-doca::before{content:"Doca ";color:var(--texto-fraco);font-size:10.5px;text-transform:uppercase;}
+    .linha-selecao .campo-carga::before{content:"Carga ";color:var(--texto-fraco);font-size:10.5px;text-transform:uppercase;}
+    .linha-selecao .campo-volume::before{content:"Vol ";color:var(--texto-fraco);font-size:10.5px;text-transform:uppercase;}
+    .linha-selecao .campo-sku::before{content:"SKU ";color:var(--texto-fraco);font-size:10.5px;text-transform:uppercase;}
+    .linha-selecao .campo-carga{font-size:17px;font-weight:700;color:var(--faixa);font-family:var(--mono);}
+    .linha-selecao .campo-fornecedor{grid-column:1 / -1;font-weight:600;font-size:16px;}
+    .linha-selecao .campo-status{grid-column:1 / -1;font-size:13px;margin-top:2px;}
     .linha-selecao .bloco-circulo{grid-column:1 / -1;justify-content:flex-start;margin-top:8px;gap:10px;}
-    .linha-selecao .circulo-dist{width:36px;height:36px;}
-    .linha-selecao .hora-marcada{font-size:14.5px;}
+    .linha-selecao .circulo-dist{width:34px;height:34px;}
+    .linha-selecao .hora-marcada{font-size:13px;}
 
     /* ---- Configuração de turno em coluna única ---- */
     .linha-config{flex-direction:column;align-items:stretch;gap:10px;}
@@ -399,38 +336,18 @@
 
     /* ---- Grade de distribuição: mantém rolagem lateral, com dica ---- */
     .grade-wrap{position:relative;-webkit-overflow-scrolling:touch;}
-    .grade-cabecalho{font-size:14px;}
-    .grade-cabecalho .data-hora{font-size:13px;}
+    .grade-cabecalho{font-size:12px;}
     .grade-cabecalho::after{
       content:"◂ arraste para o lado ▸";
       display:block;width:100%;font-family:'Inter',sans-serif;font-weight:400;
-      font-size:11.5px;letter-spacing:0.3px;color:#cfd6e8;text-transform:none;opacity:.8;
+      font-size:10px;letter-spacing:0.3px;color:#cfd6e8;text-transform:none;opacity:.8;
     }
-    table.grade{font-size:14px;min-width:1080px;}
-    table.grade th, table.grade td{padding:9px 10px;}
-    table.grade thead th{font-size:12px;}
-    table.grade input.painel-input{font-size:14px;width:78px;}
+    table.grade{font-size:11px;}
 
     .rodape-grade{flex-direction:column;}
-    .rodape-grade .botao{width:100%;text-align:center;padding:13px 10px;font-size:13.5px;}
+    .rodape-grade .botao{width:100%;text-align:center;}
 
-    .secao-titulo{margin:26px 0 10px;font-size:16px;}
-
-    /* ---- Login ---- */
-    .cartao-login{width:90vw;max-width:360px;padding:36px 26px 28px;}
-    .cartao-login h1{font-size:24px;}
-    .cartao-login .rotulo{font-size:13px;}
-    .campo label{font-size:13px;}
-    .campo input{font-size:17px;padding:13px 12px;}
-    #btn-entrar{font-size:15px;padding:14px;}
-    #erro-login{font-size:14px;}
-
-    /* ---- Modal colar planilha ---- */
-    .modal-caixa{padding:22px 20px 20px;}
-    .modal-caixa h2{font-size:17px;}
-    .modal-texto{font-size:14px;}
-    #area-colar{font-size:14.5px;}
-    .modal-botoes .botao{padding:12px 14px;font-size:13.5px;}
+    .secao-titulo{margin:26px 0 10px;font-size:14px;}
   }
 
   /* ===================== MODAL COLAR PLANILHA ===================== */
@@ -614,6 +531,7 @@
     <div class="item"><div class="num" id="r-data">—</div><div class="lbl" id="r-data-lbl">Data</div></div>
   </div>
 
+  <div class="dica-scroll-mobile">◂ arraste a tabela para o lado ▸</div>
   <div class="caixa-tabela">
     <table id="tabela-cargas">
       <thead>
@@ -804,7 +722,7 @@ let souAdmin = false;
 let mapaCargos = {};       // usuario -> cargo (para mostrar na lista de online)
 let listaPresencaAtual = []; // usuários online no momento
 
-const STATUS_OPCOES = ["CARGA ETIQUETADA", "EM PROCESSO DE ETIQUETAGEM", "PENDENTE DE ETIQUETAGEM"];
+const STATUS_OPCOES = ["CARGA ETIQUETADA", "EM PROCESSO DE ETIQUETAGEM", "PENDENTE DE ETIQUETAGEM", "PARCIALMENTE DISTRIBUIDA"];
 const COLUNAS = ["produtivo","doca","carga","fornecedor","liberacao","hora","d1","volume","sku","departamento","status","obs"];
 const RENOMEAR_COLUNAS = {produtivo:"Produtivo", doca:"Doca", carga:"Carga", fornecedor:"Fornecedor", liberacao:"Liberação", hora:"Hora", d1:"D-1", volume:"Volume", sku:"SKU", departamento:"Departamento", status:"Status", obs:"Obs."};
 
@@ -932,6 +850,18 @@ function atualizarExibicaoCargo(){
   if(btn) btn.style.display = souAdmin ? "inline-block" : "none";
   const btnZerar = document.getElementById("btn-zerar-dia");
   if(btnZerar) btnZerar.style.display = souAdmin ? "inline-block" : "none";
+
+  // Adicionar carga e Colar Planilha só para quem pode gerenciar
+  // (Conferente, Encarregado, ADM) — Ajudante de Depósito só visualiza.
+  const btnAdd = document.getElementById("btn-add-linha");
+  if(btnAdd) btnAdd.style.display = podeGerenciar() ? "inline-block" : "none";
+  const btnColar = document.getElementById("btn-abrir-colar");
+  if(btnColar) btnColar.style.display = podeGerenciar() ? "inline-block" : "none";
+
+  // Como a permissão muda o que é editável em cada linha (inputs, seletor
+  // de status, botão remover), a tabela e a distribuição precisam ser
+  // redesenhadas quando o cargo muda.
+  if(linhasCargasAtual.length || firebaseOk) renderizarTabela(linhasCargasAtual);
 }
 
 document.getElementById("btn-sair").addEventListener("click", ()=>{
@@ -1124,12 +1054,16 @@ function classeStatus(status){
   if(status === "CARGA ETIQUETADA") return "status-etiquetada";
   if(status === "EM PROCESSO DE ETIQUETAGEM") return "status-processo";
   if(status === "PENDENTE DE ETIQUETAGEM") return "status-pendente";
+  if(status === "PARCIALMENTE DISTRIBUIDA") return "status-parcial";
   return "";
 }
 
 function renderizarTabela(linhas){
   linhasCargasAtual = linhas; // mantém todas (inclusive já distribuídas) para a grade de distribuição
-  const linhasPiso = linhas.filter(l=> !l.distribuido); // carga distribuída sai da lista de "Cargas no Piso"
+  // Carga totalmente distribuída sai da lista de "Cargas no Piso" — mas se
+  // estiver com status PARCIALMENTE DISTRIBUIDA, continua aparecendo aqui
+  // mesmo já tendo uma marcação de distribuição associada.
+  const linhasPiso = linhas.filter(l=> !l.distribuido || l.status === "PARCIALMENTE DISTRIBUIDA");
   const corpo = document.getElementById("corpo-tabela");
   corpo.innerHTML = "";
 
@@ -1150,6 +1084,7 @@ function renderizarTabela(linhas){
         td.className = classeStatus(linha.status);
         const sel = document.createElement("select");
         sel.className = "cel";
+        sel.disabled = !podeGerenciar();
         STATUS_OPCOES.forEach(op=>{
           const o = document.createElement("option");
           o.value = op; o.textContent = op;
@@ -1163,6 +1098,7 @@ function renderizarTabela(linhas){
         const inp = document.createElement("input");
         inp.className = "cel";
         inp.value = linha[col] || "";
+        inp.readOnly = !podeGerenciar();
         inp.addEventListener("focus", ()=> celulaEmEdicao = linha.id+"-"+col);
         inp.addEventListener("blur", ()=>{ celulaEmEdicao = null; salvarCampo(linha.id, col, inp.value); });
         inp.addEventListener("keydown", e=>{ if(e.key==="Enter") inp.blur(); });
@@ -1175,8 +1111,10 @@ function renderizarTabela(linhas){
     const tdRem = document.createElement("td");
     tdRem.className = "col-remover";
     tdRem.setAttribute("data-label", "Remover");
-    tdRem.innerHTML = `<button class="btn-remover" title="Remover carga">✕</button>`;
-    tdRem.querySelector("button").addEventListener("click", ()=> removerLinha(linha.id));
+    if(podeGerenciar()){
+      tdRem.innerHTML = `<button class="btn-remover" title="Remover carga">✕</button>`;
+      tdRem.querySelector("button").addEventListener("click", ()=> removerLinha(linha.id));
+    }
     tr.appendChild(tdRem);
 
     corpo.appendChild(tr);
@@ -1194,16 +1132,18 @@ function renderizarTabela(linhas){
 }
 
 function salvarCampo(id, campo, valor){
-  if(!firebaseOk) return;
+  if(!firebaseOk || !podeGerenciar()) return;
   db.collection("cargas").doc(id).update({[campo]: valor}).catch(err=>console.error(err));
 }
 
 function removerLinha(id){
+  if(!podeGerenciar()) return;
   if(!confirm("Remover esta carga do painel?")) return;
   db.collection("cargas").doc(id).delete();
 }
 
 document.getElementById("btn-add-linha").addEventListener("click", async ()=>{
+  if(!podeGerenciar()) return;
   const snap = await db.collection("cargas").orderBy("ordem","desc").limit(1).get();
   const proximaOrdem = snap.empty ? 0 : (snap.docs[0].data().ordem||0) + 1;
   const nova = {ordem: proximaOrdem};
@@ -1255,6 +1195,7 @@ async function tratarColagem(e, idLinhaInicial, colInicial, linhasAtuais){
 /* ---------------------- MODAL: COLAR PLANILHA INTEIRA ---------------------- */
 const modalColar = document.getElementById("modal-colar");
 document.getElementById("btn-abrir-colar").addEventListener("click", ()=>{
+  if(!podeGerenciar()) return;
   document.getElementById("area-colar").value = "";
   modalColar.classList.add("aberto");
 });
@@ -1309,6 +1250,7 @@ function textoParaLinhas(texto){
 }
 
 document.getElementById("btn-adicionar-colar").addEventListener("click", async ()=>{
+  if(!podeGerenciar()) return;
   const linhasNovas = textoParaLinhas(document.getElementById("area-colar").value);
   if(linhasNovas.length===0){ modalColar.classList.remove("aberto"); return; }
   const snapAtual = await db.collection("cargas").orderBy("ordem","desc").limit(1).get();
@@ -1323,6 +1265,7 @@ document.getElementById("btn-adicionar-colar").addEventListener("click", async (
 });
 
 document.getElementById("btn-substituir-colar").addEventListener("click", async ()=>{
+  if(!podeGerenciar()) return;
   const linhasNovas = textoParaLinhas(document.getElementById("area-colar").value);
   if(linhasNovas.length===0){ modalColar.classList.remove("aberto"); return; }
   if(!confirm(`Isso vai atualizar a tabela com ${linhasNovas.length} carga(s) do relatório colado. Cargas já marcadas como DISTRIBUÍDA que não estiverem nesse relatório novo serão mantidas (não somem). Continuar?`)) return;
@@ -1423,10 +1366,15 @@ function escapeHtml(s){
    DISTRIBUIÇÃO — seleção de cargas e grade (T1 / T2 / T3)
    ===================================================================== */
 
-// Só Conferente, Encarregado ou ADM podem marcar/desmarcar distribuição
-// e editar Qtd. Produtivos / Estocado Full / Estocado Mix.
+// Só Conferente, Encarregado ou ADM podem gerenciar o painel: adicionar,
+// editar ou remover cargas, colar planilha, e distribuição (marcar/
+// desmarcar, editar Qtd. Produtivos / Estocado Full / Estocado Mix).
+const CARGOS_GESTAO = ["Conferente", "Encarregado", "ADM"];
+function podeGerenciar(){
+  return CARGOS_GESTAO.includes(cargoAtual);
+}
 function podeDistribuir(){
-  return ["Conferente", "Encarregado", "ADM"].includes(cargoAtual);
+  return podeGerenciar();
 }
 
 function atualizarAvisoPermissao(){
