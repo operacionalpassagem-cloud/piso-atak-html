@@ -197,7 +197,6 @@
   }
 
   /* ===================== TABELA ===================== */
-  .dica-scroll-mobile{display:none;}
   .caixa-tabela{
     background:var(--painel);
     border:1px solid var(--linha);
@@ -252,7 +251,6 @@
   .status-etiquetada{background:var(--ok-bg)!important;color:#7de3a4!important;}
   .status-processo{background:var(--alerta-bg)!important;color:#f0c674!important;}
   .status-pendente{background:var(--pendente-bg)!important;color:#f19b9b!important;}
-  .status-parcial{background:#1c2c3d!important;color:#8ec9f0!important;}
 
   tfoot td{
     font-family:var(--mono);
@@ -274,7 +272,7 @@
     .caixa-tabela{border:1px solid #000;}
     thead th{background:#eee!important;color:#000!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
     td .cel, td select.cel{color:#000!important;}
-    .status-etiquetada,.status-processo,.status-pendente,.status-parcial{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    .status-etiquetada,.status-processo,.status-pendente{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
   }
 
   @media (max-width:760px){
@@ -297,18 +295,81 @@
     .rodape-acoes .botao{padding:12px 10px;font-size:12px;text-align:center;}
     .aviso-sync{text-align:center;}
 
-    /* ---- Tabela "Cargas no Piso": continua tabela de verdade, igual ao
-       computador — só ganha rolagem lateral por causa da largura ---- */
-    .dica-scroll-mobile{
-      display:block;text-align:center;font-size:11px;color:var(--texto-fraco);
-      letter-spacing:0.5px;margin:0 0 6px;
+    /* ---- Tabela "Cargas no Piso" vira lista de cartões (fonte maior) ---- */
+    .caixa-tabela{overflow-x:visible;border:none;background:transparent;}
+    table#tabela-cargas{min-width:0;}
+    #tabela-cargas thead{display:none;}
+    #tabela-cargas tfoot{display:none;}
+    #tabela-cargas, #tabela-cargas tbody{display:block;width:100%;}
+    #tabela-cargas tbody tr{
+      display:flex;flex-direction:column;position:relative;
+      background:var(--painel);border:1px solid var(--linha);border-left:4px solid var(--faixa);
+      border-radius:6px;margin-bottom:16px;padding:16px 16px 6px;
+      box-shadow:0 3px 12px rgba(0,0,0,.3);
     }
-    .caixa-tabela{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--linha);}
-    table#tabela-cargas{min-width:1150px;font-size:12px;}
-    #tabela-cargas th, #tabela-cargas td{padding:7px 8px;}
-    #tabela-cargas td .cel{font-size:12.5px;padding:6px 5px;}
-    #tabela-cargas td select.cel{font-size:11.5px;}
-    #tabela-cargas .btn-remover{width:26px;height:26px;font-size:13px;}
+    #tabela-cargas tbody td{
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+      border-bottom:1px dashed var(--linha);padding:12px 0;
+      font-size:15.5px;order:20;
+    }
+    #tabela-cargas tbody td:last-child{border-bottom:none;}
+    #tabela-cargas tbody td::before{
+      content:attr(data-label);
+      font-family:var(--disp);font-size:11.5px;letter-spacing:1px;text-transform:uppercase;
+      color:var(--texto-fraco);flex:0 0 auto;
+    }
+    #tabela-cargas tbody td .cel{width:auto;flex:1 1 auto;text-align:right;font-size:15.5px;padding:6px 4px;}
+    #tabela-cargas tbody td.col-num .cel{text-align:right;font-size:16px;}
+    #tabela-cargas tbody td select.cel{text-align:right;direction:rtl;font-size:14.5px;}
+
+    /* Carga e Fornecedor viram o "cabeçalho" do cartão, em destaque */
+    #tabela-cargas tbody td[data-label="Carga"]{
+      order:1;border-bottom:none;padding:0 0 6px;
+    }
+    #tabela-cargas tbody td[data-label="Carga"]::before{font-size:11px;}
+    #tabela-cargas tbody td[data-label="Carga"] .cel{
+      font-size:23px;font-weight:700;color:var(--faixa);font-family:var(--mono);text-align:right;
+    }
+    #tabela-cargas tbody td[data-label="Fornecedor"]{
+      order:2;flex-direction:column;align-items:flex-start;gap:2px;
+      padding:0 0 12px;margin-bottom:8px;border-bottom:1px solid var(--linha);
+    }
+    #tabela-cargas tbody td[data-label="Fornecedor"]::before{font-size:10.5px;}
+    #tabela-cargas tbody td[data-label="Fornecedor"] .cel{
+      font-size:16.5px;font-weight:600;text-align:left;color:var(--texto);width:100%;padding:2px 0 0;
+    }
+
+    /* Status em destaque, seletor grande e fácil de tocar */
+    #tabela-cargas tbody td[data-label="Status"]{
+      order:3;flex-direction:column;align-items:stretch;gap:6px;padding:12px 0;
+    }
+    #tabela-cargas tbody td[data-label="Status"] select.cel{
+      font-size:15px;padding:12px 10px;text-align:left;direction:ltr;font-weight:700;width:100%;
+    }
+
+    /* Observação: texto livre, fica embaixo e por extenso */
+    #tabela-cargas tbody td[data-label="Obs."]{
+      order:19;flex-direction:column;align-items:flex-start;gap:4px;
+    }
+    #tabela-cargas tbody td[data-label="Obs."] .cel{text-align:left;font-size:14.5px;width:100%;}
+
+    #tabela-cargas tbody td[data-label="Produtivo"]{order:4;}
+    #tabela-cargas tbody td[data-label="Doca"]{order:5;}
+    #tabela-cargas tbody td[data-label="Liberação"]{order:6;}
+    #tabela-cargas tbody td[data-label="Hora"]{order:7;}
+    #tabela-cargas tbody td[data-label="D-1"]{order:8;}
+    #tabela-cargas tbody td[data-label="Volume"]{order:9;}
+    #tabela-cargas tbody td[data-label="SKU"]{order:10;}
+    #tabela-cargas tbody td[data-label="Departamento"]{order:11;}
+
+    #tabela-cargas tbody td.col-remover{
+      order:0;position:absolute;top:10px;right:10px;border-bottom:none;padding:0;width:auto;
+    }
+    #tabela-cargas tbody td.col-remover::before{display:none;}
+    #tabela-cargas tbody .btn-remover{
+      width:30px;height:30px;border-radius:50%;background:var(--asfalto-2);
+      border:1px solid var(--linha);font-size:15px;
+    }
 
     /* ---- Seleção de Cargas — Distribuição vira cartão (fonte maior) ---- */
     .cabecalho-selecao{display:none;}
@@ -478,6 +539,39 @@
 
   .rodape-grade{display:flex;justify-content:flex-end;gap:10px;margin-top:12px;flex-wrap:wrap;}
 
+  /* ===================== MODAL: ADICIONAR CARGA NA GRADE ===================== */
+  .grade-form-grid{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:6px;}
+  .grade-form-grid .campo-config{display:flex;flex-direction:column;gap:4px;}
+  .grade-form-grid .campo-config.full{flex:1 1 100%;}
+  .grade-form-grid label{color:var(--texto-fraco);letter-spacing:.8px;text-transform:uppercase;font-size:10.5px;}
+  .grade-form-grid input, .grade-form-grid select{
+    width:130px;background:var(--asfalto-2);border:1px solid var(--linha);color:var(--texto);
+    padding:8px 10px;font-family:var(--mono);font-size:12.5px;
+  }
+  .grade-form-grid .campo-config.full input{width:100%;}
+  .grade-form-grid input:focus, .grade-form-grid select:focus{outline:none;border-color:var(--faixa);}
+
+  /* ===================== PENDÊNCIAS AGRUPAMENTO CROSS ===================== */
+  .pend-cabecalho{
+    display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:14px;
+    background:var(--painel);border:1px solid var(--linha);border-bottom:none;padding:12px 14px;
+  }
+  .pend-info{display:flex;gap:22px;flex-wrap:wrap;}
+  .pend-info .bloco{font-size:12px;}
+  .pend-info .bloco .rot{color:var(--texto-fraco);letter-spacing:1px;text-transform:uppercase;font-size:10px;margin-bottom:2px;}
+  .pend-info .bloco .val{font-family:var(--mono);font-weight:600;}
+  .pend-atualizado{font-family:var(--mono);font-size:11px;color:var(--texto-fraco);white-space:nowrap;}
+  table.pend{border-collapse:collapse;width:100%;min-width:820px;font-size:12.5px;}
+  table.pend th, table.pend td{border:1px solid var(--linha);padding:7px 8px;text-align:center;}
+  table.pend thead th{
+    background:#1f2c47;color:#fff;font-family:var(--disp);font-weight:600;
+    font-size:10.5px;letter-spacing:.8px;text-transform:uppercase;white-space:nowrap;
+  }
+  table.pend td.fornecedor{text-align:left;font-weight:600;}
+  table.pend td.pct-baixo{background:var(--pendente-bg);color:#ff9b9b;font-weight:700;}
+  table.pend td.turno-marcado{background:#2b3a5c;color:#fff;font-weight:700;}
+  .pend-vazio{padding:20px;text-align:center;color:var(--texto-fraco);font-size:12.5px;background:var(--painel);border:1px solid var(--linha);border-top:none;}
+
   @media print{
     .secao-titulo .direita .botao, .linha-selecao .circulo-dist, .rodape-grade, .aviso-permissao{display:none!important;}
   }
@@ -531,7 +625,6 @@
     <div class="item"><div class="num" id="r-data">—</div><div class="lbl" id="r-data-lbl">Data</div></div>
   </div>
 
-  <div class="dica-scroll-mobile">◂ arraste a tabela para o lado ▸</div>
   <div class="caixa-tabela">
     <table id="tabela-cargas">
       <thead>
@@ -597,6 +690,9 @@
   <!-- ===================== GRADE DE DISTRIBUIÇÃO ===================== -->
   <div class="secao-titulo">
     Grade de Distribuição
+    <div class="direita">
+      <button class="botao principal" id="btn-grade-add-carga" style="display:none;">+ Adicionar Carga na Grade</button>
+    </div>
   </div>
   <div class="linha-config">
     <div class="campo-config">
@@ -640,6 +736,76 @@
     <button class="botao" id="btn-grade-baixar-html">Baixar HTML</button>
     <button class="botao" id="btn-grade-baixar-excel">Baixar Excel</button>
     <button class="botao" id="btn-grade-imprimir">Imprimir Grade</button>
+  </div>
+
+  <!-- ===================== PENDÊNCIAS AGRUPAMENTO CROSS ===================== -->
+  <div class="secao-titulo">
+    Pendências Agrupamento Cross
+    <div class="direita">
+      <button class="botao" id="btn-pend-abrir-colar" style="display:none;">Colar Planilha</button>
+    </div>
+  </div>
+  <p class="aviso-permissao" id="aviso-permissao-pend"></p>
+  <div class="pend-cabecalho" id="pend-cabecalho" style="display:none;">
+    <div class="pend-info">
+      <div class="bloco"><div class="rot">Status</div><div class="val" id="pend-status">—</div></div>
+      <div class="bloco"><div class="rot">Tipo Carga</div><div class="val" id="pend-tipo-carga">—</div></div>
+    </div>
+    <div class="pend-atualizado" id="pend-atualizado"></div>
+  </div>
+  <div class="caixa-tabela" id="pend-caixa-tabela" style="display:none;">
+    <table class="pend" id="tabela-pend">
+      <thead>
+        <tr>
+          <th>Carga</th><th>Fornecedor</th><th>Aging</th><th>Vol</th>
+          <th>Montada</th><th>Agrupada</th><th>%</th><th>Turno</th><th>Linha</th>
+        </tr>
+      </thead>
+      <tbody id="corpo-pend"></tbody>
+    </table>
+  </div>
+  <div class="pend-vazio" id="pend-vazio">Nenhuma planilha de pendências colada ainda.</div>
+</div>
+
+<!-- ===================== MODAL: ADICIONAR CARGA NA GRADE (ADM / ENCARREGADO) ===================== -->
+<div id="modal-grade-add" class="modal-fundo">
+  <div class="modal-caixa">
+    <h2>Adicionar Carga na Grade</h2>
+    <p class="modal-texto">
+      Adiciona uma carga direto na Grade de Distribuição do turno escolhido, sem precisar passar pela lista de "Cargas no Piso". Disponível apenas para <strong>ADM</strong> e <strong>Encarregado</strong>.
+    </p>
+    <div class="grade-form-grid">
+      <div class="campo-config"><label for="ga-turno">Turno</label>
+        <select id="ga-turno"><option value="T1">T1</option><option value="T2">T2</option><option value="T3">T3</option></select>
+      </div>
+      <div class="campo-config"><label for="ga-doca">Doca</label><input type="text" id="ga-doca"></div>
+      <div class="campo-config"><label for="ga-carga">Carga</label><input type="text" id="ga-carga"></div>
+      <div class="campo-config full"><label for="ga-descricao">Descrição / Fornecedor</label><input type="text" id="ga-descricao"></div>
+      <div class="campo-config"><label for="ga-liberacao">Liberação</label><input type="text" id="ga-liberacao" placeholder="dd/mm/aaaa"></div>
+      <div class="campo-config"><label for="ga-d1">D-1</label><input type="text" id="ga-d1"></div>
+      <div class="campo-config"><label for="ga-volume">Volume</label><input type="number" id="ga-volume"></div>
+      <div class="campo-config"><label for="ga-sku">SKU</label><input type="number" id="ga-sku"></div>
+      <div class="campo-config"><label for="ga-hora">Hora Dist.</label><input type="text" id="ga-hora" placeholder="hh:mm"></div>
+    </div>
+    <div class="modal-botoes">
+      <button class="botao" id="btn-grade-add-cancelar">Cancelar</button>
+      <button class="botao principal" id="btn-grade-add-salvar">Adicionar à Grade</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== MODAL: COLAR PLANILHA — PENDÊNCIAS AGRUPAMENTO CROSS ===================== -->
+<div id="modal-pend-colar" class="modal-fundo">
+  <div class="modal-caixa">
+    <h2>Colar Planilha — Pendências Agrupamento Cross</h2>
+    <p class="modal-texto">
+      Copie o bloco inteiro da planilha (incluindo as linhas de Status, Tipo Carga, data/hora e o cabeçalho <strong>Carga, Fornecedor, Aging, Vol...</strong>) e cole aqui embaixo. Cada nova colagem substitui a tabela de pendências atual.
+    </p>
+    <textarea id="area-pend-colar" placeholder="Cole aqui o bloco copiado do Excel (Ctrl+V)…"></textarea>
+    <div class="modal-botoes">
+      <button class="botao" id="btn-pend-cancelar-colar">Cancelar</button>
+      <button class="botao principal" id="btn-pend-substituir-colar">Atualizar Pendências</button>
+    </div>
   </div>
 </div>
 
@@ -722,7 +888,7 @@ let souAdmin = false;
 let mapaCargos = {};       // usuario -> cargo (para mostrar na lista de online)
 let listaPresencaAtual = []; // usuários online no momento
 
-const STATUS_OPCOES = ["CARGA ETIQUETADA", "EM PROCESSO DE ETIQUETAGEM", "PENDENTE DE ETIQUETAGEM", "PARCIALMENTE DISTRIBUIDA"];
+const STATUS_OPCOES = ["CARGA ETIQUETADA", "EM PROCESSO DE ETIQUETAGEM", "PENDENTE DE ETIQUETAGEM"];
 const COLUNAS = ["produtivo","doca","carga","fornecedor","liberacao","hora","d1","volume","sku","departamento","status","obs"];
 const RENOMEAR_COLUNAS = {produtivo:"Produtivo", doca:"Doca", carga:"Carga", fornecedor:"Fornecedor", liberacao:"Liberação", hora:"Hora", d1:"D-1", volume:"Volume", sku:"SKU", departamento:"Departamento", status:"Status", obs:"Obs."};
 
@@ -737,6 +903,8 @@ let turnoSelecionado = "T2";
 let configTurnoAtual = { qtdProdutivos:"", estocadoFull:"", estocadoMix:"" };
 let unsubConfigTurno = null;
 let relogioGradeIniciado = false;
+let unsubPendencias = null;
+let pendenciasAtual = null; // último documento de pendências lido do Firestore
 
 function iniciarFirebase(){
   try{
@@ -800,6 +968,7 @@ async function entrarNoPainel(cargoSolicitado){
     escutarCargas();
     escutarConfigTurno();
     escutarMeuUsuario();
+    escutarPendencias();
   }else{
     document.getElementById("aviso-sync").textContent = "⚠ Firebase não configurado — abra o código e cole o firebaseConfig do seu projeto.";
   }
@@ -843,6 +1012,12 @@ async function prepararCargoUsuario(cargoSolicitado){
   souAdmin = (cargoAtual === "ADM");
 }
 
+// Só ADM e Encarregado podem adicionar carga direto na Grade de
+// Distribuição (sem passar pela lista de "Cargas no Piso").
+function podeAdicionarNaGrade(){
+  return ["ADM", "Encarregado"].includes(cargoAtual);
+}
+
 function atualizarExibicaoCargo(){
   const info = document.getElementById("meu-cargo");
   if(info) info.textContent = `${usuarioAtual} · ${cargoAtual}`;
@@ -850,18 +1025,11 @@ function atualizarExibicaoCargo(){
   if(btn) btn.style.display = souAdmin ? "inline-block" : "none";
   const btnZerar = document.getElementById("btn-zerar-dia");
   if(btnZerar) btnZerar.style.display = souAdmin ? "inline-block" : "none";
-
-  // Adicionar carga e Colar Planilha só para quem pode gerenciar
-  // (Conferente, Encarregado, ADM) — Ajudante de Depósito só visualiza.
-  const btnAdd = document.getElementById("btn-add-linha");
-  if(btnAdd) btnAdd.style.display = podeGerenciar() ? "inline-block" : "none";
-  const btnColar = document.getElementById("btn-abrir-colar");
-  if(btnColar) btnColar.style.display = podeGerenciar() ? "inline-block" : "none";
-
-  // Como a permissão muda o que é editável em cada linha (inputs, seletor
-  // de status, botão remover), a tabela e a distribuição precisam ser
-  // redesenhadas quando o cargo muda.
-  if(linhasCargasAtual.length || firebaseOk) renderizarTabela(linhasCargasAtual);
+  const btnGradeAdd = document.getElementById("btn-grade-add-carga");
+  if(btnGradeAdd) btnGradeAdd.style.display = podeAdicionarNaGrade() ? "inline-block" : "none";
+  const btnPendColar = document.getElementById("btn-pend-abrir-colar");
+  if(btnPendColar) btnPendColar.style.display = podeDistribuir() ? "inline-block" : "none";
+  atualizarAvisoPermissaoPend();
 }
 
 document.getElementById("btn-sair").addEventListener("click", ()=>{
@@ -1054,16 +1222,12 @@ function classeStatus(status){
   if(status === "CARGA ETIQUETADA") return "status-etiquetada";
   if(status === "EM PROCESSO DE ETIQUETAGEM") return "status-processo";
   if(status === "PENDENTE DE ETIQUETAGEM") return "status-pendente";
-  if(status === "PARCIALMENTE DISTRIBUIDA") return "status-parcial";
   return "";
 }
 
 function renderizarTabela(linhas){
   linhasCargasAtual = linhas; // mantém todas (inclusive já distribuídas) para a grade de distribuição
-  // Carga totalmente distribuída sai da lista de "Cargas no Piso" — mas se
-  // estiver com status PARCIALMENTE DISTRIBUIDA, continua aparecendo aqui
-  // mesmo já tendo uma marcação de distribuição associada.
-  const linhasPiso = linhas.filter(l=> !l.distribuido || l.status === "PARCIALMENTE DISTRIBUIDA");
+  const linhasPiso = linhas.filter(l=> !l.distribuido); // carga distribuída sai da lista de "Cargas no Piso"
   const corpo = document.getElementById("corpo-tabela");
   corpo.innerHTML = "";
 
@@ -1084,7 +1248,6 @@ function renderizarTabela(linhas){
         td.className = classeStatus(linha.status);
         const sel = document.createElement("select");
         sel.className = "cel";
-        sel.disabled = !podeGerenciar();
         STATUS_OPCOES.forEach(op=>{
           const o = document.createElement("option");
           o.value = op; o.textContent = op;
@@ -1098,7 +1261,6 @@ function renderizarTabela(linhas){
         const inp = document.createElement("input");
         inp.className = "cel";
         inp.value = linha[col] || "";
-        inp.readOnly = !podeGerenciar();
         inp.addEventListener("focus", ()=> celulaEmEdicao = linha.id+"-"+col);
         inp.addEventListener("blur", ()=>{ celulaEmEdicao = null; salvarCampo(linha.id, col, inp.value); });
         inp.addEventListener("keydown", e=>{ if(e.key==="Enter") inp.blur(); });
@@ -1111,10 +1273,8 @@ function renderizarTabela(linhas){
     const tdRem = document.createElement("td");
     tdRem.className = "col-remover";
     tdRem.setAttribute("data-label", "Remover");
-    if(podeGerenciar()){
-      tdRem.innerHTML = `<button class="btn-remover" title="Remover carga">✕</button>`;
-      tdRem.querySelector("button").addEventListener("click", ()=> removerLinha(linha.id));
-    }
+    tdRem.innerHTML = `<button class="btn-remover" title="Remover carga">✕</button>`;
+    tdRem.querySelector("button").addEventListener("click", ()=> removerLinha(linha.id));
     tr.appendChild(tdRem);
 
     corpo.appendChild(tr);
@@ -1132,18 +1292,16 @@ function renderizarTabela(linhas){
 }
 
 function salvarCampo(id, campo, valor){
-  if(!firebaseOk || !podeGerenciar()) return;
+  if(!firebaseOk) return;
   db.collection("cargas").doc(id).update({[campo]: valor}).catch(err=>console.error(err));
 }
 
 function removerLinha(id){
-  if(!podeGerenciar()) return;
   if(!confirm("Remover esta carga do painel?")) return;
   db.collection("cargas").doc(id).delete();
 }
 
 document.getElementById("btn-add-linha").addEventListener("click", async ()=>{
-  if(!podeGerenciar()) return;
   const snap = await db.collection("cargas").orderBy("ordem","desc").limit(1).get();
   const proximaOrdem = snap.empty ? 0 : (snap.docs[0].data().ordem||0) + 1;
   const nova = {ordem: proximaOrdem};
@@ -1195,7 +1353,6 @@ async function tratarColagem(e, idLinhaInicial, colInicial, linhasAtuais){
 /* ---------------------- MODAL: COLAR PLANILHA INTEIRA ---------------------- */
 const modalColar = document.getElementById("modal-colar");
 document.getElementById("btn-abrir-colar").addEventListener("click", ()=>{
-  if(!podeGerenciar()) return;
   document.getElementById("area-colar").value = "";
   modalColar.classList.add("aberto");
 });
@@ -1250,7 +1407,6 @@ function textoParaLinhas(texto){
 }
 
 document.getElementById("btn-adicionar-colar").addEventListener("click", async ()=>{
-  if(!podeGerenciar()) return;
   const linhasNovas = textoParaLinhas(document.getElementById("area-colar").value);
   if(linhasNovas.length===0){ modalColar.classList.remove("aberto"); return; }
   const snapAtual = await db.collection("cargas").orderBy("ordem","desc").limit(1).get();
@@ -1265,7 +1421,6 @@ document.getElementById("btn-adicionar-colar").addEventListener("click", async (
 });
 
 document.getElementById("btn-substituir-colar").addEventListener("click", async ()=>{
-  if(!podeGerenciar()) return;
   const linhasNovas = textoParaLinhas(document.getElementById("area-colar").value);
   if(linhasNovas.length===0){ modalColar.classList.remove("aberto"); return; }
   if(!confirm(`Isso vai atualizar a tabela com ${linhasNovas.length} carga(s) do relatório colado. Cargas já marcadas como DISTRIBUÍDA que não estiverem nesse relatório novo serão mantidas (não somem). Continuar?`)) return;
@@ -1318,6 +1473,161 @@ document.getElementById("btn-substituir-colar").addEventListener("click", async 
   modalColar.classList.remove("aberto");
 });
 
+/* =====================================================================
+   PENDÊNCIAS AGRUPAMENTO CROSS — colar planilha e renderizar tabela
+   ===================================================================== */
+
+function atualizarAvisoPermissaoPend(){
+  const el = document.getElementById("aviso-permissao-pend");
+  if(!el) return;
+  el.textContent = podeDistribuir()
+    ? ""
+    : `Apenas Conferente, Encarregado ou ADM podem colar/atualizar a planilha de pendências. Seu cargo atual: ${cargoAtual}.`;
+}
+
+// Interpreta o bloco colado do Excel. Reconhece linhas de STATUS, TIPO
+// CARGA, data/hora e o cabeçalho de colunas (Carga, Fornecedor, Aging,
+// Vol, ..., Turno, Linha) para mapear as colunas dinamicamente — assim
+// funciona mesmo que a coluna em branco ("Coluna2") do Excel não venha,
+// ou venha em posição diferente.
+function parsearTextoPendencias(texto){
+  const linhasBrutas = texto.replace(/\r/g,"").split("\n").map(l=>l.split("\t")).filter(cel=> cel.some(v=>(v||"").trim()!==""));
+  const resultado = { titulo:"", status:"", tipoCarga:"", dataHoraTxt:"", linhas:[] };
+  const padraoHora = /^\d{1,2}:\d{2}(:\d{2})?$/;
+  let colunas = null; // nomes das colunas normalizados, na ordem em que vieram
+
+  const normalizar = s => (s||"").trim().toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+
+  linhasBrutas.forEach(cel=>{
+    const primeira = (cel[0]||"").trim();
+    const primeiraNorm = normalizar(primeira);
+
+    if(primeiraNorm === "status"){ resultado.status = (cel[1]||"").trim(); return; }
+    if(primeiraNorm === "tipo carga"){ resultado.tipoCarga = (cel[1]||"").trim(); return; }
+    if(padraoHora.test(primeira)){ resultado.dataHoraTxt = `${primeira}  ${(cel[1]||"").trim()}`; return; }
+    if(primeiraNorm === "carga"){
+      colunas = cel.map(normalizar);
+      return;
+    }
+    if(primeiraNorm.startsWith("pendencias") || primeiraNorm.startsWith("pendências")){
+      resultado.titulo = primeira;
+      return;
+    }
+    if(primeira === ""){ return; }
+
+    // Linha de dados. Se já vimos o cabeçalho, mapeia por posição/nome;
+    // senão, usa a ordem padrão conhecida da planilha de origem.
+    let obj = {};
+    if(colunas){
+      colunas.forEach((nomeCol, i)=>{
+        const v = (cel[i]||"").trim();
+        if(nomeCol==="carga") obj.carga = v;
+        else if(nomeCol==="fornecedor") obj.fornecedor = v;
+        else if(nomeCol==="aging") obj.aging = v;
+        else if(nomeCol==="vol") obj.vol = v;
+        else if(nomeCol==="montada") obj.montada = v;
+        else if(nomeCol==="agrupada") obj.agrupada = v;
+        else if(nomeCol==="%") obj.percentual = v;
+        else if(nomeCol==="turno") obj.turno = v;
+        else if(nomeCol==="linha") obj.linha = v;
+      });
+    } else if(cel.length >= 10){
+      obj = { carga:cel[0], fornecedor:cel[1], aging:cel[2], vol:cel[3], montada:cel[5], agrupada:cel[6], percentual:cel[7], turno:cel[8], linha:cel[9] };
+    } else {
+      obj = { carga:cel[0], fornecedor:cel[1], aging:cel[2], vol:cel[3], montada:cel[4], agrupada:cel[5], percentual:cel[6], turno:cel[7], linha:cel[8] };
+    }
+    if((obj.carga||"").trim() !== "") resultado.linhas.push(obj);
+  });
+
+  return resultado;
+}
+
+document.getElementById("btn-pend-abrir-colar").addEventListener("click", ()=>{
+  if(!podeDistribuir()) return;
+  document.getElementById("area-pend-colar").value = "";
+  document.getElementById("modal-pend-colar").classList.add("aberto");
+});
+document.getElementById("btn-pend-cancelar-colar").addEventListener("click", ()=>{
+  document.getElementById("modal-pend-colar").classList.remove("aberto");
+});
+document.getElementById("modal-pend-colar").addEventListener("click", e=>{
+  if(e.target.id === "modal-pend-colar") e.target.classList.remove("aberto");
+});
+
+document.getElementById("btn-pend-substituir-colar").addEventListener("click", async ()=>{
+  if(!podeDistribuir() || !firebaseOk) return;
+  const texto = document.getElementById("area-pend-colar").value;
+  const dados = parsearTextoPendencias(texto);
+  if(dados.linhas.length === 0){ alert("Não encontrei nenhuma linha de dados válida no que foi colado."); return; }
+
+  try{
+    await db.collection("relatorios").doc("pendenciasCross").set({
+      ...dados,
+      atualizadoPor: usuarioAtual,
+      atualizadoEm: Date.now()
+    });
+    document.getElementById("modal-pend-colar").classList.remove("aberto");
+  }catch(err){
+    console.error(err);
+    alert("Erro ao salvar pendências: " + err.message);
+  }
+});
+
+function escutarPendencias(){
+  if(!firebaseOk) return;
+  if(unsubPendencias) unsubPendencias();
+  unsubPendencias = db.collection("relatorios").doc("pendenciasCross").onSnapshot(doc=>{
+    pendenciasAtual = doc.exists ? doc.data() : null;
+    renderizarPendencias();
+  });
+}
+
+function renderizarPendencias(){
+  const cabecalho = document.getElementById("pend-cabecalho");
+  const caixaTabela = document.getElementById("pend-caixa-tabela");
+  const vazio = document.getElementById("pend-vazio");
+  const corpo = document.getElementById("corpo-pend");
+
+  if(!pendenciasAtual || !Array.isArray(pendenciasAtual.linhas) || pendenciasAtual.linhas.length===0){
+    cabecalho.style.display = "none";
+    caixaTabela.style.display = "none";
+    vazio.style.display = "block";
+    return;
+  }
+  cabecalho.style.display = "flex";
+  caixaTabela.style.display = "block";
+  vazio.style.display = "none";
+
+  document.getElementById("pend-status").textContent = pendenciasAtual.status || "—";
+  document.getElementById("pend-tipo-carga").textContent = pendenciasAtual.tipoCarga || "—";
+  const dt = new Date(pendenciasAtual.atualizadoEm || Date.now());
+  const dtTxt = `${String(dt.getDate()).padStart(2,"0")}/${String(dt.getMonth()+1).padStart(2,"0")}/${dt.getFullYear()} ${String(dt.getHours()).padStart(2,"0")}:${String(dt.getMinutes()).padStart(2,"0")}`;
+  document.getElementById("pend-atualizado").textContent =
+    `Atualizado em ${dtTxt}${pendenciasAtual.atualizadoPor ? " · " + pendenciasAtual.atualizadoPor : ""}`;
+
+  corpo.innerHTML = "";
+  pendenciasAtual.linhas.forEach(l=>{
+    const pctNum = parseFloat(String(l.percentual||"").replace("%","").replace(",", "."));
+    const pctBaixo = !isNaN(pctNum) && pctNum < 95;
+    const turnoPreenchido = (l.turno||"").trim() !== "" && (l.turno||"").trim() !== "-";
+
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${escapeHtml(l.carga||"")}</td>
+      <td class="fornecedor">${escapeHtml(l.fornecedor||"")}</td>
+      <td>${escapeHtml(l.aging||"")}</td>
+      <td>${escapeHtml(l.vol||"")}</td>
+      <td>${escapeHtml(l.montada||"")}</td>
+      <td>${escapeHtml(l.agrupada||"")}</td>
+      <td class="${pctBaixo ? "pct-baixo" : ""}">${escapeHtml(l.percentual||"")}</td>
+      <td class="${turnoPreenchido ? "turno-marcado" : ""}">${escapeHtml(l.turno||"")}</td>
+      <td>${escapeHtml(l.linha||"")}</td>
+    `;
+    corpo.appendChild(tr);
+  });
+}
+
 /* ---------------------- IMPRIMIR ---------------------- */
 document.getElementById("btn-imprimir").addEventListener("click", ()=> window.print());
 
@@ -1366,15 +1676,10 @@ function escapeHtml(s){
    DISTRIBUIÇÃO — seleção de cargas e grade (T1 / T2 / T3)
    ===================================================================== */
 
-// Só Conferente, Encarregado ou ADM podem gerenciar o painel: adicionar,
-// editar ou remover cargas, colar planilha, e distribuição (marcar/
-// desmarcar, editar Qtd. Produtivos / Estocado Full / Estocado Mix).
-const CARGOS_GESTAO = ["Conferente", "Encarregado", "ADM"];
-function podeGerenciar(){
-  return CARGOS_GESTAO.includes(cargoAtual);
-}
+// Só Conferente, Encarregado ou ADM podem marcar/desmarcar distribuição
+// e editar Qtd. Produtivos / Estocado Full / Estocado Mix.
 function podeDistribuir(){
-  return podeGerenciar();
+  return ["Conferente", "Encarregado", "ADM"].includes(cargoAtual);
 }
 
 function atualizarAvisoPermissao(){
@@ -1438,6 +1743,55 @@ function marcarDistribuido(id, marcarComo){
     : { distribuido:false, turnoDist:"", horaDist:"", marcadoPor:"" };
   db.collection("cargas").doc(id).update(dados).catch(err=>console.error(err));
 }
+
+/* ---------------------- ADICIONAR CARGA DIRETO NA GRADE ---------------------- */
+// Cria a carga já como distribuída (não passa pela lista de "Cargas no
+// Piso"), aparecendo direto na Grade de Distribuição do turno escolhido.
+const modalGradeAdd = document.getElementById("modal-grade-add");
+
+document.getElementById("btn-grade-add-carga").addEventListener("click", ()=>{
+  if(!podeAdicionarNaGrade()) return;
+  ["ga-doca","ga-carga","ga-descricao","ga-liberacao","ga-d1","ga-volume","ga-sku"].forEach(id=>{
+    document.getElementById(id).value = "";
+  });
+  document.getElementById("ga-turno").value = turnoSelecionado;
+  document.getElementById("ga-hora").value = horaAgora();
+  modalGradeAdd.classList.add("aberto");
+});
+document.getElementById("btn-grade-add-cancelar").addEventListener("click", ()=> modalGradeAdd.classList.remove("aberto"));
+modalGradeAdd.addEventListener("click", e=>{ if(e.target === modalGradeAdd) modalGradeAdd.classList.remove("aberto"); });
+
+document.getElementById("btn-grade-add-salvar").addEventListener("click", async ()=>{
+  if(!podeAdicionarNaGrade() || !firebaseOk) return;
+  const carga = document.getElementById("ga-carga").value.trim();
+  if(!carga){ alert("Preencha ao menos o número da carga."); return; }
+
+  const snap = await db.collection("cargas").orderBy("ordem","desc").limit(1).get();
+  const proximaOrdem = snap.empty ? 0 : (snap.docs[0].data().ordem||0) + 1;
+  const turnoEscolhido = document.getElementById("ga-turno").value;
+
+  const nova = { ordem: proximaOrdem };
+  COLUNAS.forEach(c=> nova[c] = c==="status" ? STATUS_OPCOES[0] : "");
+  nova.doca = document.getElementById("ga-doca").value.trim();
+  nova.carga = carga;
+  nova.fornecedor = document.getElementById("ga-descricao").value.trim();
+  nova.liberacao = document.getElementById("ga-liberacao").value.trim();
+  nova.d1 = document.getElementById("ga-d1").value.trim();
+  nova.volume = document.getElementById("ga-volume").value.trim();
+  nova.sku = document.getElementById("ga-sku").value.trim();
+  nova.distribuido = true;
+  nova.turnoDist = turnoEscolhido;
+  nova.horaDist = document.getElementById("ga-hora").value.trim() || horaAgora();
+  nova.marcadoPor = usuarioAtual;
+
+  try{
+    await db.collection("cargas").add(nova);
+    modalGradeAdd.classList.remove("aberto");
+  }catch(err){
+    console.error(err);
+    alert("Erro ao adicionar carga na grade: " + err.message);
+  }
+});
 
 function renderizarSelecaoDistribuicao(linhas){
   atualizarAvisoPermissao();
