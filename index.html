@@ -28,6 +28,8 @@
     --alerta-bg: #332a12;
     --pendente: #b23b3b;
     --pendente-bg: #331717;
+    --parcial: #c9702f;
+    --parcial-bg: #3a2513;
     --mono: 'IBM Plex Mono', 'Courier New', monospace;
     --disp: 'Oswald', 'Arial Narrow', sans-serif;
   }
@@ -250,6 +252,7 @@
 
   .status-etiquetada{background:var(--ok-bg)!important;color:#7de3a4!important;}
   .status-processo{background:var(--alerta-bg)!important;color:#f0c674!important;}
+  .status-parcial{background:var(--parcial-bg)!important;color:#f2ab73!important;}
   .status-pendente{background:var(--pendente-bg)!important;color:#f19b9b!important;}
 
   tfoot td{
@@ -272,7 +275,7 @@
     .caixa-tabela{border:1px solid #000;}
     thead th{background:#eee!important;color:#000!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
     td .cel, td select.cel{color:#000!important;}
-    .status-etiquetada,.status-processo,.status-pendente{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    .status-etiquetada,.status-processo,.status-parcial,.status-pendente{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
   }
 
   @media (max-width:760px){
@@ -570,6 +573,20 @@
   table.pend td.fornecedor{text-align:left;font-weight:600;}
   table.pend td.pct-baixo{background:var(--pendente-bg);color:#ff9b9b;font-weight:700;}
   table.pend td.turno-marcado{background:#2b3a5c;color:#fff;font-weight:700;}
+  table.pend td.col-tratativa{white-space:nowrap;}
+  .bloco-tratativa{display:flex;align-items:center;justify-content:center;gap:7px;}
+  .circulo-tratativa{
+    width:22px;height:22px;border-radius:50%;
+    border:2px solid var(--texto-fraco);
+    background:transparent;cursor:pointer;color:var(--texto);
+    font-family:var(--mono);font-weight:700;font-size:12px;line-height:1;
+    display:flex;align-items:center;justify-content:center;flex:0 0 auto;
+    transition:all .15s;
+  }
+  .circulo-tratativa:hover:not(:disabled){border-color:var(--faixa);}
+  .circulo-tratativa.marcado{background:var(--ok);border-color:var(--ok);box-shadow:0 0 8px rgba(46,125,79,.6);color:#fff;}
+  .circulo-tratativa:disabled{cursor:not-allowed;opacity:.35;}
+  .tratativa-nome{font-family:var(--mono);font-size:10.5px;color:var(--texto-fraco);text-align:left;line-height:1.2;}
   .pend-vazio{padding:20px;text-align:center;color:var(--texto-fraco);font-size:12.5px;background:var(--painel);border:1px solid var(--linha);border-top:none;}
 
   @media print{
@@ -758,7 +775,7 @@
       <thead>
         <tr>
           <th>Carga</th><th>Fornecedor</th><th>Aging</th><th>Vol</th>
-          <th>Montada</th><th>Agrupada</th><th>%</th><th>Turno</th><th>Linha</th>
+          <th>Montada</th><th>Agrupada</th><th>%</th><th>Turno</th><th>Linha</th><th>Tratativa</th>
         </tr>
       </thead>
       <tbody id="corpo-pend"></tbody>
@@ -888,7 +905,7 @@ let souAdmin = false;
 let mapaCargos = {};       // usuario -> cargo (para mostrar na lista de online)
 let listaPresencaAtual = []; // usuários online no momento
 
-const STATUS_OPCOES = ["CARGA ETIQUETADA", "EM PROCESSO DE ETIQUETAGEM", "PENDENTE DE ETIQUETAGEM"];
+const STATUS_OPCOES = ["CARGA ETIQUETADA", "EM PROCESSO DE ETIQUETAGEM", "PENDENTE DE ETIQUETAGEM", "PARCIALMENTE ETIQUETADA"];
 const COLUNAS = ["produtivo","doca","carga","fornecedor","liberacao","hora","d1","volume","sku","departamento","status","obs"];
 const RENOMEAR_COLUNAS = {produtivo:"Produtivo", doca:"Doca", carga:"Carga", fornecedor:"Fornecedor", liberacao:"Liberação", hora:"Hora", d1:"D-1", volume:"Volume", sku:"SKU", departamento:"Departamento", status:"Status", obs:"Obs."};
 
@@ -1221,6 +1238,7 @@ function escutarCargas(){
 function classeStatus(status){
   if(status === "CARGA ETIQUETADA") return "status-etiquetada";
   if(status === "EM PROCESSO DE ETIQUETAGEM") return "status-processo";
+  if(status === "PARCIALMENTE ETIQUETADA") return "status-parcial";
   if(status === "PENDENTE DE ETIQUETAGEM") return "status-pendente";
   return "";
 }
@@ -1583,6 +1601,24 @@ function escutarPendencias(){
   });
 }
 
+// Marca (ou desmarca) a tratativa de uma pendência específica, guardada
+// por número de carga dentro do próprio documento (campo "tratativas").
+// Ao colar um novo relatório, o documento inteiro é substituído (.set
+// sem merge), então as marcações somem sozinhas e o ciclo recomeça.
+function marcarTratativaPend(carga, marcarComo){
+  if(!podeDistribuir() || !firebaseOk || !carga) return;
+  const campo = `tratativas.${carga}`;
+  if(marcarComo){
+    db.collection("relatorios").doc("pendenciasCross")
+      .update({ [campo]: { por: usuarioAtual, em: Date.now() } })
+      .catch(err=>console.error(err));
+  } else {
+    db.collection("relatorios").doc("pendenciasCross")
+      .update({ [campo]: firebase.firestore.FieldValue.delete() })
+      .catch(err=>console.error(err));
+  }
+}
+
 function renderizarPendencias(){
   const cabecalho = document.getElementById("pend-cabecalho");
   const caixaTabela = document.getElementById("pend-caixa-tabela");
@@ -1606,15 +1642,20 @@ function renderizarPendencias(){
   document.getElementById("pend-atualizado").textContent =
     `Atualizado em ${dtTxt}${pendenciasAtual.atualizadoPor ? " · " + pendenciasAtual.atualizadoPor : ""}`;
 
+  const tratativas = pendenciasAtual.tratativas || {};
+
   corpo.innerHTML = "";
   pendenciasAtual.linhas.forEach(l=>{
     const pctNum = parseFloat(String(l.percentual||"").replace("%","").replace(",", "."));
     const pctBaixo = !isNaN(pctNum) && pctNum < 95;
     const turnoPreenchido = (l.turno||"").trim() !== "" && (l.turno||"").trim() !== "-";
+    const carga = (l.carga||"").trim();
+    const tratativa = tratativas[carga];
+    const marcado = !!tratativa;
 
     const tr = document.createElement("tr");
     tr.innerHTML = `
-      <td>${escapeHtml(l.carga||"")}</td>
+      <td>${escapeHtml(carga)}</td>
       <td class="fornecedor">${escapeHtml(l.fornecedor||"")}</td>
       <td>${escapeHtml(l.aging||"")}</td>
       <td>${escapeHtml(l.vol||"")}</td>
@@ -1624,6 +1665,27 @@ function renderizarPendencias(){
       <td class="${turnoPreenchido ? "turno-marcado" : ""}">${escapeHtml(l.turno||"")}</td>
       <td>${escapeHtml(l.linha||"")}</td>
     `;
+
+    const tdTrat = document.createElement("td");
+    tdTrat.className = "col-tratativa";
+    const bloco = document.createElement("div");
+    bloco.className = "bloco-tratativa";
+    const btn = document.createElement("button");
+    btn.className = "circulo-tratativa" + (marcado ? " marcado" : "");
+    btn.textContent = "X";
+    btn.title = marcado ? "Desmarcar tratativa" : "Marcar como tratada";
+    btn.disabled = !podeDistribuir() || !carga;
+    btn.addEventListener("click", ()=> marcarTratativaPend(carga, !marcado));
+    bloco.appendChild(btn);
+    if(marcado){
+      const sp = document.createElement("span");
+      sp.className = "tratativa-nome";
+      sp.textContent = tratativa.por || "";
+      bloco.appendChild(sp);
+    }
+    tdTrat.appendChild(bloco);
+    tr.appendChild(tdTrat);
+
     corpo.appendChild(tr);
   });
 }
