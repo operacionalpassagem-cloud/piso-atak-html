@@ -28,8 +28,6 @@
     --alerta-bg: #332a12;
     --pendente: #b23b3b;
     --pendente-bg: #331717;
-    --parcial: #c9702f;
-    --parcial-bg: #3a2513;
     --mono: 'IBM Plex Mono', 'Courier New', monospace;
     --disp: 'Oswald', 'Arial Narrow', sans-serif;
   }
@@ -252,7 +250,6 @@
 
   .status-etiquetada{background:var(--ok-bg)!important;color:#7de3a4!important;}
   .status-processo{background:var(--alerta-bg)!important;color:#f0c674!important;}
-  .status-parcial{background:var(--parcial-bg)!important;color:#f2ab73!important;}
   .status-pendente{background:var(--pendente-bg)!important;color:#f19b9b!important;}
 
   tfoot td{
@@ -275,7 +272,7 @@
     .caixa-tabela{border:1px solid #000;}
     thead th{background:#eee!important;color:#000!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
     td .cel, td select.cel{color:#000!important;}
-    .status-etiquetada,.status-processo,.status-parcial,.status-pendente{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    .status-etiquetada,.status-processo,.status-pendente{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
   }
 
   @media (max-width:760px){
@@ -511,6 +508,18 @@
   .circulo-dist.marcado{background:var(--ok);border-color:var(--ok);box-shadow:0 0 8px rgba(46,125,79,.6);}
   .circulo-dist:disabled{cursor:not-allowed;opacity:.35;}
   .hora-marcada{font-family:var(--mono);font-size:11px;color:var(--texto-fraco);}
+  .circulo-dist-mini{
+    width:18px;height:18px;border-radius:50%;
+    border:2px solid var(--texto-fraco);
+    background:transparent;cursor:pointer;
+    transition:all .15s; flex:0 0 auto;
+  }
+  .circulo-dist-mini:hover:not(:disabled){border-color:var(--faixa);}
+  .circulo-dist-mini.marcado{background:#3b7fb2;border-color:#3b7fb2;box-shadow:0 0 6px rgba(59,127,178,.6);}
+  .circulo-dist-mini:disabled{cursor:not-allowed;opacity:.35;}
+  table.pend tr.pend-tratada{opacity:.42;}
+  table.pend td.col-tratada{white-space:nowrap;}
+  .tratada-por{font-family:var(--mono);font-size:10px;color:var(--texto-fraco);margin-left:6px;}
 
   .linha-config{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-bottom:14px;}
   .linha-config .campo-config{display:flex;flex-direction:column;gap:4px;}
@@ -573,21 +582,28 @@
   table.pend td.fornecedor{text-align:left;font-weight:600;}
   table.pend td.pct-baixo{background:var(--pendente-bg);color:#ff9b9b;font-weight:700;}
   table.pend td.turno-marcado{background:#2b3a5c;color:#fff;font-weight:700;}
-  table.pend td.col-tratativa{white-space:nowrap;}
-  .bloco-tratativa{display:flex;align-items:center;justify-content:center;gap:7px;}
-  .circulo-tratativa{
-    width:22px;height:22px;border-radius:50%;
-    border:2px solid var(--texto-fraco);
-    background:transparent;cursor:pointer;color:var(--texto);
-    font-family:var(--mono);font-weight:700;font-size:12px;line-height:1;
-    display:flex;align-items:center;justify-content:center;flex:0 0 auto;
-    transition:all .15s;
-  }
-  .circulo-tratativa:hover:not(:disabled){border-color:var(--faixa);}
-  .circulo-tratativa.marcado{background:var(--ok);border-color:var(--ok);box-shadow:0 0 8px rgba(46,125,79,.6);color:#fff;}
-  .circulo-tratativa:disabled{cursor:not-allowed;opacity:.35;}
-  .tratativa-nome{font-family:var(--mono);font-size:10.5px;color:var(--texto-fraco);text-align:left;line-height:1.2;}
   .pend-vazio{padding:20px;text-align:center;color:var(--texto-fraco);font-size:12.5px;background:var(--painel);border:1px solid var(--linha);border-top:none;}
+
+  /* ===================== TOASTS / NOTIFICAÇÕES ===================== */
+  .toast-container{
+    position:fixed; top:14px; right:14px; z-index:9999;
+    display:flex; flex-direction:column; gap:8px;
+    max-width:340px;
+  }
+  .toast{
+    background:var(--painel-2); border:1px solid var(--linha); border-left:4px solid var(--ok);
+    color:var(--texto); font-size:12.5px; line-height:1.4;
+    padding:10px 12px; border-radius:4px;
+    box-shadow:0 6px 18px rgba(0,0,0,.35);
+    animation:toast-in .25s ease-out;
+  }
+  .toast.saindo{animation:toast-out .25s ease-in forwards;}
+  .toast b{color:var(--faixa);}
+  .toast .toast-sub{color:var(--texto-fraco); font-size:11px; margin-top:2px;}
+  .toast.tipo-tratada{border-left-color:#3b7fb2;}
+  @keyframes toast-in{from{opacity:0; transform:translateX(24px);} to{opacity:1; transform:translateX(0);}}
+  @keyframes toast-out{from{opacity:1; transform:translateX(0);} to{opacity:0; transform:translateX(24px);}}
+  @media print{ .toast-container{display:none!important;} }
 
   @media print{
     .secao-titulo .direita .botao, .linha-selecao .circulo-dist, .rodape-grade, .aviso-permissao{display:none!important;}
@@ -595,6 +611,9 @@
 </style>
 </head>
 <body>
+
+<!-- ===================== TOASTS / NOTIFICAÇÕES ===================== -->
+<div id="toast-container" class="toast-container"></div>
 
 <!-- ===================== TELA DE LOGIN ===================== -->
 <div id="tela-login">
@@ -775,7 +794,7 @@
       <thead>
         <tr>
           <th>Carga</th><th>Fornecedor</th><th>Aging</th><th>Vol</th>
-          <th>Montada</th><th>Agrupada</th><th>%</th><th>Turno</th><th>Linha</th><th>Tratativa</th>
+          <th>Montada</th><th>Agrupada</th><th>%</th><th>Turno</th><th>Linha</th><th>Tratada</th>
         </tr>
       </thead>
       <tbody id="corpo-pend"></tbody>
@@ -905,7 +924,7 @@ let souAdmin = false;
 let mapaCargos = {};       // usuario -> cargo (para mostrar na lista de online)
 let listaPresencaAtual = []; // usuários online no momento
 
-const STATUS_OPCOES = ["CARGA ETIQUETADA", "EM PROCESSO DE ETIQUETAGEM", "PENDENTE DE ETIQUETAGEM", "PARCIALMENTE ETIQUETADA"];
+const STATUS_OPCOES = ["CARGA ETIQUETADA", "EM PROCESSO DE ETIQUETAGEM", "PENDENTE DE ETIQUETAGEM"];
 const COLUNAS = ["produtivo","doca","carga","fornecedor","liberacao","hora","d1","volume","sku","departamento","status","obs"];
 const RENOMEAR_COLUNAS = {produtivo:"Produtivo", doca:"Doca", carga:"Carga", fornecedor:"Fornecedor", liberacao:"Liberação", hora:"Hora", d1:"D-1", volume:"Volume", sku:"SKU", departamento:"Departamento", status:"Status", obs:"Obs."};
 
@@ -922,6 +941,8 @@ let unsubConfigTurno = null;
 let relogioGradeIniciado = false;
 let unsubPendencias = null;
 let pendenciasAtual = null; // último documento de pendências lido do Firestore
+let primeiraCargaSnapshot = true; // evita notificação de distribuição ao carregar a página
+let primeiraPendSnapshot = true; // evita notificação de pendência tratada ao carregar a página
 
 function iniciarFirebase(){
   try{
@@ -1222,12 +1243,33 @@ function escutarCargas(){
 
   db.collection("cargas").orderBy("ordem").onSnapshot(snap=>{
     clearTimeout(timeoutAlerta);
+
+    // Notifica quando uma carga é marcada como distribuída (por qualquer
+    // usuário conectado). Compara com o estado anterior (linhasCargasAtual)
+    // ANTES de renderizarTabela() sobrescrevê-lo. Não dispara na primeira
+    // carga da página (primeiraCargaSnapshot) nem ao desmarcar.
+    if(!primeiraCargaSnapshot){
+      snap.docChanges().forEach(change=>{
+        const depois = change.doc.data();
+        if(change.type === "modified"){
+          const antes = linhasCargasAtual.find(l=> l.id === change.doc.id);
+          if(antes && !antes.distribuido && depois.distribuido){
+            mostrarToast(`<b>${escapeHtml(depois.marcadoPor || "—")}</b> distribuiu a carga <b>${escapeHtml(depois.carga || "—")}</b><div class="toast-sub">${escapeHtml(depois.fornecedor || "—")}</div>`, "distribuida");
+          }
+        } else if(change.type === "added" && depois.distribuido){
+          // Carga criada já distribuída (ex.: "+ Adicionar direto na Grade")
+          mostrarToast(`<b>${escapeHtml(depois.marcadoPor || "—")}</b> distribuiu a carga <b>${escapeHtml(depois.carga || "—")}</b><div class="toast-sub">${escapeHtml(depois.fornecedor || "—")}</div>`, "distribuida");
+        }
+      });
+    }
+
     const linhas = [];
     snap.forEach(doc=> linhas.push({id:doc.id, ...doc.data()}));
     renderizarTabela(linhas);
     avisoEl.textContent = "● sincronizado em tempo real";
     avisoEl.classList.add("ativo");
     if(linhas.length === 0) semearSeVazio();
+    primeiraCargaSnapshot = false;
   }, err=>{
     clearTimeout(timeoutAlerta);
     avisoEl.textContent = "⚠ erro de sincronização: " + err.message;
@@ -1238,7 +1280,6 @@ function escutarCargas(){
 function classeStatus(status){
   if(status === "CARGA ETIQUETADA") return "status-etiquetada";
   if(status === "EM PROCESSO DE ETIQUETAGEM") return "status-processo";
-  if(status === "PARCIALMENTE ETIQUETADA") return "status-parcial";
   if(status === "PENDENTE DE ETIQUETAGEM") return "status-pendente";
   return "";
 }
@@ -1596,27 +1637,41 @@ function escutarPendencias(){
   if(!firebaseOk) return;
   if(unsubPendencias) unsubPendencias();
   unsubPendencias = db.collection("relatorios").doc("pendenciasCross").onSnapshot(doc=>{
-    pendenciasAtual = doc.exists ? doc.data() : null;
+    const novoDado = doc.exists ? doc.data() : null;
+
+    // Notifica quando uma pendência é marcada como tratada (por qualquer
+    // usuário conectado). Compara linha a linha (pela "carga") com o
+    // estado anterior, ANTES de sobrescrever pendenciasAtual. Não dispara
+    // na primeira leitura da página nem ao desmarcar.
+    if(!primeiraPendSnapshot && novoDado && Array.isArray(novoDado.linhas) &&
+       pendenciasAtual && Array.isArray(pendenciasAtual.linhas)){
+      novoDado.linhas.forEach(nova=>{
+        const antiga = pendenciasAtual.linhas.find(l=> l.carga === nova.carga);
+        if(antiga && !antiga.tratada && nova.tratada){
+          mostrarToast(`<b>${escapeHtml(nova.tratadaPor || "—")}</b> tratou a pendência da carga <b>${escapeHtml(nova.carga || "—")}</b><div class="toast-sub">${escapeHtml(nova.fornecedor || "—")}</div>`, "tratada");
+        }
+      });
+    }
+
+    pendenciasAtual = novoDado;
     renderizarPendencias();
+    primeiraPendSnapshot = false;
   });
 }
 
-// Marca (ou desmarca) a tratativa de uma pendência específica, guardada
-// por número de carga dentro do próprio documento (campo "tratativas").
-// Ao colar um novo relatório, o documento inteiro é substituído (.set
-// sem merge), então as marcações somem sozinhas e o ciclo recomeça.
-function marcarTratativaPend(carga, marcarComo){
-  if(!podeDistribuir() || !firebaseOk || !carga) return;
-  const campo = `tratativas.${carga}`;
-  if(marcarComo){
-    db.collection("relatorios").doc("pendenciasCross")
-      .update({ [campo]: { por: usuarioAtual, em: Date.now() } })
-      .catch(err=>console.error(err));
-  } else {
-    db.collection("relatorios").doc("pendenciasCross")
-      .update({ [campo]: firebase.firestore.FieldValue.delete() })
-      .catch(err=>console.error(err));
-  }
+// Marca (ou desmarca) uma linha de pendência de agrupamento cross como
+// tratada. Identifica a linha pelo número da carga e regrava o array
+// completo no Firestore (o documento inteiro é substituído a cada colagem
+// de planilha, então a linha não tem um id próprio).
+function marcarPendenciaTratada(cargaId, marcarComo){
+  if(!podeDistribuir() || !firebaseOk || !pendenciasAtual || !Array.isArray(pendenciasAtual.linhas)) return;
+  const linhas = pendenciasAtual.linhas.map(l=>{
+    if(l.carga !== cargaId) return l;
+    return marcarComo
+      ? {...l, tratada:true, tratadaPor: usuarioAtual, tratadaEm: Date.now()}
+      : {...l, tratada:false, tratadaPor:"", tratadaEm:""};
+  });
+  db.collection("relatorios").doc("pendenciasCross").update({linhas}).catch(err=>console.error(err));
 }
 
 function renderizarPendencias(){
@@ -1642,20 +1697,17 @@ function renderizarPendencias(){
   document.getElementById("pend-atualizado").textContent =
     `Atualizado em ${dtTxt}${pendenciasAtual.atualizadoPor ? " · " + pendenciasAtual.atualizadoPor : ""}`;
 
-  const tratativas = pendenciasAtual.tratativas || {};
-
   corpo.innerHTML = "";
   pendenciasAtual.linhas.forEach(l=>{
     const pctNum = parseFloat(String(l.percentual||"").replace("%","").replace(",", "."));
     const pctBaixo = !isNaN(pctNum) && pctNum < 95;
     const turnoPreenchido = (l.turno||"").trim() !== "" && (l.turno||"").trim() !== "-";
-    const carga = (l.carga||"").trim();
-    const tratativa = tratativas[carga];
-    const marcado = !!tratativa;
+    const tratada = !!l.tratada;
 
     const tr = document.createElement("tr");
+    tr.className = tratada ? "pend-tratada" : "";
     tr.innerHTML = `
-      <td>${escapeHtml(carga)}</td>
+      <td>${escapeHtml(l.carga||"")}</td>
       <td class="fornecedor">${escapeHtml(l.fornecedor||"")}</td>
       <td>${escapeHtml(l.aging||"")}</td>
       <td>${escapeHtml(l.vol||"")}</td>
@@ -1664,27 +1716,22 @@ function renderizarPendencias(){
       <td class="${pctBaixo ? "pct-baixo" : ""}">${escapeHtml(l.percentual||"")}</td>
       <td class="${turnoPreenchido ? "turno-marcado" : ""}">${escapeHtml(l.turno||"")}</td>
       <td>${escapeHtml(l.linha||"")}</td>
+      <td class="col-tratada"></td>
     `;
 
-    const tdTrat = document.createElement("td");
-    tdTrat.className = "col-tratativa";
-    const bloco = document.createElement("div");
-    bloco.className = "bloco-tratativa";
+    const tdTratada = tr.querySelector(".col-tratada");
     const btn = document.createElement("button");
-    btn.className = "circulo-tratativa" + (marcado ? " marcado" : "");
-    btn.textContent = "X";
-    btn.title = marcado ? "Desmarcar tratativa" : "Marcar como tratada";
-    btn.disabled = !podeDistribuir() || !carga;
-    btn.addEventListener("click", ()=> marcarTratativaPend(carga, !marcado));
-    bloco.appendChild(btn);
-    if(marcado){
+    btn.className = "circulo-dist-mini" + (tratada ? " marcado" : "");
+    btn.title = tratada ? "Desmarcar como tratada" : "Marcar como tratada";
+    btn.disabled = !podeDistribuir();
+    btn.addEventListener("click", ()=> marcarPendenciaTratada(l.carga, !tratada));
+    tdTratada.appendChild(btn);
+    if(tratada && l.tratadaPor){
       const sp = document.createElement("span");
-      sp.className = "tratativa-nome";
-      sp.textContent = tratativa.por || "";
-      bloco.appendChild(sp);
+      sp.className = "tratada-por";
+      sp.textContent = l.tratadaPor;
+      tdTratada.appendChild(sp);
     }
-    tdTrat.appendChild(bloco);
-    tr.appendChild(tdTrat);
 
     corpo.appendChild(tr);
   });
@@ -1790,6 +1837,22 @@ function salvarConfigTurno(campo, valor){
 document.getElementById("in-qtd-produtivos").addEventListener("change", e=> salvarConfigTurno("qtdProdutivos", Number(e.target.value)||0));
 document.getElementById("in-estocado-full").addEventListener("change", e=> salvarConfigTurno("estocadoFull", e.target.value));
 document.getElementById("in-estocado-mix").addEventListener("change", e=> salvarConfigTurno("estocadoMix", e.target.value));
+
+/* ---------------------- NOTIFICAÇÕES (TOAST) ---------------------- */
+// Mostra uma notificação temporária no canto da tela. "tipo" controla
+// a cor da barra lateral: "distribuida" (verde, padrão) ou "tratada" (azul).
+function mostrarToast(mensagem, tipo){
+  const cont = document.getElementById("toast-container");
+  if(!cont) return;
+  const el = document.createElement("div");
+  el.className = "toast" + (tipo === "tratada" ? " tipo-tratada" : "");
+  el.innerHTML = mensagem;
+  cont.appendChild(el);
+  setTimeout(()=>{
+    el.classList.add("saindo");
+    setTimeout(()=> el.remove(), 260);
+  }, 5000);
+}
 
 function horaAgora(){
   const d = new Date();
