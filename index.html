@@ -248,10 +248,13 @@
   }
   .btn-remover:hover{color:var(--pendente);}
 
+  .status-aguardando{background:rgba(154,160,166,0.16)!important;color:#c7ccd1!important;}
   .status-etiquetada{background:var(--ok-bg)!important;color:#7de3a4!important;}
   .status-parcial{background:rgba(244,148,53,0.16)!important;color:#f4a054!important;}
+  .status-parcial-dist{background:rgba(122,158,235,0.16)!important;color:#8fb0f0!important;}
   .status-processo{background:var(--alerta-bg)!important;color:#f0c674!important;}
   .status-pendente{background:var(--pendente-bg)!important;color:#f19b9b!important;}
+  .status-conferencia{background:rgba(158,122,235,0.16)!important;color:#b79bf0!important;}
 
   tfoot td{
     font-family:var(--mono);
@@ -273,7 +276,7 @@
     .caixa-tabela{border:1px solid #000;}
     thead th{background:#eee!important;color:#000!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
     td .cel, td select.cel{color:#000!important;}
-    .status-etiquetada,.status-parcial,.status-processo,.status-pendente{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    .status-etiquetada,.status-parcial,.status-parcial-dist,.status-processo,.status-pendente,.status-aguardando,.status-conferencia{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
     table.grade td.cel-hora-dist input.cel{border:none!important;color:#000!important;background:transparent!important;}
   }
 
@@ -998,7 +1001,15 @@ let souAdmin = false;
 let mapaCargos = {};       // usuario -> cargo (para mostrar na lista de online)
 let listaPresencaAtual = []; // usuários online no momento
 
-const STATUS_OPCOES = ["CARGA ETIQUETADA", "PARCIALMENTE ETIQUETADA", "EM PROCESSO DE ETIQUETAGEM", "PENDENTE DE ETIQUETAGEM"];
+const STATUS_OPCOES = [
+  "AGUARDANDO IMPRESSÃO",
+  "PENDENTE DE ETIQUETAGEM",
+  "EM PROCESSO DE ETIQUETAGEM",
+  "PARCIALMENTE ETIQUETADA",
+  "CARGA ETIQUETADA",
+  "PARCIALMENTE DISTRIBUIDA",
+  "EM CONFERÊNCIA"
+];
 const COLUNAS = ["produtivo","doca","carga","fornecedor","liberacao","hora","d1","volume","sku","departamento","status","obs"];
 const RENOMEAR_COLUNAS = {produtivo:"Produtivo", doca:"Doca", carga:"Carga", fornecedor:"Fornecedor", liberacao:"Liberação", hora:"Hora", d1:"D-1", volume:"Volume", sku:"SKU", departamento:"Departamento", status:"Status", obs:"Obs."};
 
@@ -1371,10 +1382,13 @@ function escutarCargas(){
 }
 
 function classeStatus(status){
-  if(status === "CARGA ETIQUETADA") return "status-etiquetada";
-  if(status === "PARCIALMENTE ETIQUETADA") return "status-parcial";
-  if(status === "EM PROCESSO DE ETIQUETAGEM") return "status-processo";
+  if(status === "AGUARDANDO IMPRESSÃO") return "status-aguardando";
   if(status === "PENDENTE DE ETIQUETAGEM") return "status-pendente";
+  if(status === "EM PROCESSO DE ETIQUETAGEM") return "status-processo";
+  if(status === "PARCIALMENTE ETIQUETADA") return "status-parcial";
+  if(status === "CARGA ETIQUETADA") return "status-etiquetada";
+  if(status === "PARCIALMENTE DISTRIBUIDA") return "status-parcial-dist";
+  if(status === "EM CONFERÊNCIA") return "status-conferencia";
   return "";
 }
 
@@ -2168,7 +2182,7 @@ document.getElementById("btn-grade-add-salvar").addEventListener("click", async 
   const turnoEscolhido = document.getElementById("ga-turno").value;
 
   const nova = { ordem: proximaOrdem };
-  COLUNAS.forEach(c=> nova[c] = c==="status" ? STATUS_OPCOES[0] : "");
+  COLUNAS.forEach(c=> nova[c] = c==="status" ? "CARGA ETIQUETADA" : "");
   nova.doca = document.getElementById("ga-doca").value.trim();
   nova.carga = carga;
   nova.fornecedor = document.getElementById("ga-descricao").value.trim();
