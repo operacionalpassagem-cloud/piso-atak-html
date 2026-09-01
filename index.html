@@ -249,6 +249,7 @@
   .btn-remover:hover{color:var(--pendente);}
 
   .status-etiquetada{background:var(--ok-bg)!important;color:#7de3a4!important;}
+  .status-parcial{background:rgba(244,148,53,0.16)!important;color:#f4a054!important;}
   .status-processo{background:var(--alerta-bg)!important;color:#f0c674!important;}
   .status-pendente{background:var(--pendente-bg)!important;color:#f19b9b!important;}
 
@@ -272,7 +273,8 @@
     .caixa-tabela{border:1px solid #000;}
     thead th{background:#eee!important;color:#000!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
     td .cel, td select.cel{color:#000!important;}
-    .status-etiquetada,.status-processo,.status-pendente{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    .status-etiquetada,.status-parcial,.status-processo,.status-pendente{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    table.grade td.cel-hora-dist input.cel{border:none!important;color:#000!important;background:transparent!important;}
   }
 
   @media (max-width:760px){
@@ -543,6 +545,12 @@
     font-family:var(--mono);font-size:12.5px;
   }
   table.grade input.painel-input:focus{outline:1px solid var(--faixa);}
+  table.grade td.cel-hora-dist input.cel{
+    width:100%;max-width:70px;background:transparent;border:1px solid transparent;
+    color:var(--texto);text-align:center;font-family:var(--mono);font-size:12.5px;padding:2px 4px;
+  }
+  table.grade td.cel-hora-dist input.cel:hover{border-color:var(--linha);}
+  table.grade td.cel-hora-dist input.cel:focus{outline:none;border-color:var(--faixa);background:var(--asfalto-2);}
 
   .rodape-grade{display:flex;justify-content:flex-end;gap:10px;margin-top:12px;flex-wrap:wrap;}
 
@@ -990,7 +998,7 @@ let souAdmin = false;
 let mapaCargos = {};       // usuario -> cargo (para mostrar na lista de online)
 let listaPresencaAtual = []; // usuários online no momento
 
-const STATUS_OPCOES = ["CARGA ETIQUETADA", "EM PROCESSO DE ETIQUETAGEM", "PENDENTE DE ETIQUETAGEM"];
+const STATUS_OPCOES = ["CARGA ETIQUETADA", "PARCIALMENTE ETIQUETADA", "EM PROCESSO DE ETIQUETAGEM", "PENDENTE DE ETIQUETAGEM"];
 const COLUNAS = ["produtivo","doca","carga","fornecedor","liberacao","hora","d1","volume","sku","departamento","status","obs"];
 const RENOMEAR_COLUNAS = {produtivo:"Produtivo", doca:"Doca", carga:"Carga", fornecedor:"Fornecedor", liberacao:"Liberação", hora:"Hora", d1:"D-1", volume:"Volume", sku:"SKU", departamento:"Departamento", status:"Status", obs:"Obs."};
 
@@ -1364,6 +1372,7 @@ function escutarCargas(){
 
 function classeStatus(status){
   if(status === "CARGA ETIQUETADA") return "status-etiquetada";
+  if(status === "PARCIALMENTE ETIQUETADA") return "status-parcial";
   if(status === "EM PROCESSO DE ETIQUETAGEM") return "status-processo";
   if(status === "PENDENTE DE ETIQUETAGEM") return "status-pendente";
   return "";
@@ -1449,7 +1458,7 @@ document.getElementById("btn-add-linha").addEventListener("click", async ()=>{
   const snap = await db.collection("cargas").orderBy("ordem","desc").limit(1).get();
   const proximaOrdem = snap.empty ? 0 : (snap.docs[0].data().ordem||0) + 1;
   const nova = {ordem: proximaOrdem};
-  COLUNAS.forEach(c=> nova[c] = c==="status" ? STATUS_OPCOES[2] : "");
+  COLUNAS.forEach(c=> nova[c] = c==="status" ? "PENDENTE DE ETIQUETAGEM" : "");
   db.collection("cargas").add(nova);
 });
 
@@ -2271,11 +2280,27 @@ function renderizarGradeDistribuicao(){
       <td>${l ? escapeHtml(l.d1||"") : ""}</td>
       <td>${l ? Number(l.volume||0).toLocaleString("pt-BR") : ""}</td>
       <td>${l ? escapeHtml(l.sku||"") : ""}</td>
-      <td>${l ? escapeHtml(l.horaDist||"") : ""}</td>
+      <td class="cel-hora-dist"></td>
       <td class="${classeA}">${escapeHtml(String(painelA))}</td>
       <td class="${classeB}">${escapeHtml(String(painelB))}</td>
     `;
     corpo.appendChild(tr);
+
+    // Hora Dist. editável: Conferente, Encarregado e ADM podem corrigir o
+    // horário manualmente (ex.: quando a distribuição foi marcada com
+    // atraso). Ajudante de Depósito só vê o valor, sem poder alterar.
+    const tdHora = tr.querySelector(".cel-hora-dist");
+    if(l && podeDistribuir()){
+      const inp = document.createElement("input");
+      inp.type = "text";
+      inp.className = "cel";
+      inp.placeholder = "hh:mm";
+      inp.value = l.horaDist || "";
+      inp.addEventListener("blur", ()=> salvarCampo(l.id, "horaDist", inp.value.trim()));
+      tdHora.appendChild(inp);
+    }else{
+      tdHora.textContent = l ? (l.horaDist || "") : "";
+    }
   }
 
   document.getElementById("grade-total-volume").textContent = totalVolume.toLocaleString("pt-BR");
