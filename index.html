@@ -702,6 +702,9 @@
     </div>
     <span class="aviso-sync" id="aviso-sync">conectando…</span>
   </div>
+  <div style="display:flex;justify-content:flex-end;margin-top:-6px;">
+    <button class="botao" id="btn-notif-status" style="font-size:11px;padding:5px 10px;">🔔 Notificações: verificando…</button>
+  </div>
 
   <!-- ===================== SELEÇÃO DE CARGAS PARA DISTRIBUIÇÃO ===================== -->
   <div class="secao-titulo">
@@ -986,6 +989,7 @@ function tentarEntrar(){
   if(!usuario){ erro.textContent = "Digite seu nome de usuário."; return; }
   if(senha !== SENHA_CORRETA){ erro.textContent = "Senha incorreta."; return; }
   erro.textContent = "";
+  pedirPermissaoNotificacao(); // pedido feito dentro do clique do usuário (gesto)
   usuarioAtual = usuario;
   const cargoSolicitado = cargoPelaSenha(senhaCargoDigitada); // null, "ADM", "Encarregado" ou "Conferente"
   sessionStorage.setItem("cargasPiso_usuario", usuario);
@@ -1082,6 +1086,7 @@ window.addEventListener("load", ()=>{
   const salvo = sessionStorage.getItem("cargasPiso_usuario");
   if(salvo){
     usuarioAtual = salvo;
+    pedirPermissaoNotificacao();
     const cargoSolicitado = sessionStorage.getItem("cargasPiso_cargoSolicitado") || null;
     entrarNoPainel(cargoSolicitado);
   }
@@ -1254,11 +1259,19 @@ function escutarCargas(){
         if(change.type === "modified"){
           const antes = linhasCargasAtual.find(l=> l.id === change.doc.id);
           if(antes && !antes.distribuido && depois.distribuido){
-            mostrarToast(`<b>${escapeHtml(depois.marcadoPor || "—")}</b> distribuiu a carga <b>${escapeHtml(depois.carga || "—")}</b><div class="toast-sub">${escapeHtml(depois.fornecedor || "—")}</div>`, "distribuida");
+            notificarEvento(
+              `${depois.marcadoPor || "—"} distribuiu a carga ${depois.carga || "—"}`,
+              depois.fornecedor || "",
+              "distribuida"
+            );
           }
         } else if(change.type === "added" && depois.distribuido){
           // Carga criada já distribuída (ex.: "+ Adicionar direto na Grade")
-          mostrarToast(`<b>${escapeHtml(depois.marcadoPor || "—")}</b> distribuiu a carga <b>${escapeHtml(depois.carga || "—")}</b><div class="toast-sub">${escapeHtml(depois.fornecedor || "—")}</div>`, "distribuida");
+          notificarEvento(
+            `${depois.marcadoPor || "—"} distribuiu a carga ${depois.carga || "—"}`,
+            depois.fornecedor || "",
+            "distribuida"
+          );
         }
       });
     }
@@ -1648,7 +1661,11 @@ function escutarPendencias(){
       novoDado.linhas.forEach(nova=>{
         const antiga = pendenciasAtual.linhas.find(l=> l.carga === nova.carga);
         if(antiga && !antiga.tratada && nova.tratada){
-          mostrarToast(`<b>${escapeHtml(nova.tratadaPor || "—")}</b> tratou a pendência da carga <b>${escapeHtml(nova.carga || "—")}</b><div class="toast-sub">${escapeHtml(nova.fornecedor || "—")}</div>`, "tratada");
+          notificarEvento(
+            `${nova.tratadaPor || "—"} tratou a pendência da carga ${nova.carga || "—"}`,
+            nova.fornecedor || "",
+            "tratada"
+          );
         }
       });
     }
@@ -1838,21 +1855,86 @@ document.getElementById("in-qtd-produtivos").addEventListener("change", e=> salv
 document.getElementById("in-estocado-full").addEventListener("change", e=> salvarConfigTurno("estocadoFull", e.target.value));
 document.getElementById("in-estocado-mix").addEventListener("change", e=> salvarConfigTurno("estocadoMix", e.target.value));
 
-/* ---------------------- NOTIFICAÇÕES (TOAST) ---------------------- */
-// Mostra uma notificação temporária no canto da tela. "tipo" controla
-// a cor da barra lateral: "distribuida" (verde, padrão) ou "tratada" (azul).
-function mostrarToast(mensagem, tipo){
+/* ---------------------- NOTIFICAÇÕES (TOAST + SISTEMA OPERACIONAL) ---------------------- */
+// Toast dentro da página (sempre funciona) + notificação nativa do
+// sistema operacional (funciona mesmo com a aba em segundo plano ou
+// minimizada, desde que o navegador continue aberto). "tipo" controla
+// a cor da barra lateral do toast: "distribuida" (verde) ou "tratada" (azul).
+function notificarEvento(titulo, detalhe, tipo){
+  mostrarToast(titulo, detalhe, tipo);
+  mostrarNotificacaoNativa(titulo, detalhe);
+}
+
+function mostrarToast(titulo, detalhe, tipo){
   const cont = document.getElementById("toast-container");
   if(!cont) return;
   const el = document.createElement("div");
   el.className = "toast" + (tipo === "tratada" ? " tipo-tratada" : "");
-  el.innerHTML = mensagem;
+  el.innerHTML = `<b>${escapeHtml(titulo)}</b>` + (detalhe ? `<div class="toast-sub">${escapeHtml(detalhe)}</div>` : "");
   cont.appendChild(el);
   setTimeout(()=>{
     el.classList.add("saindo");
     setTimeout(()=> el.remove(), 260);
-  }, 5000);
+  }, 6000);
 }
+
+// Pede permissão de notificação do navegador/SO. Chamada a partir do
+// clique em "Entrar" (gesto do usuário) e também ao restaurar a sessão,
+// para cobrir quem já estava logado antes dessa função existir.
+let permissaoNotifJaPedida = false;
+function pedirPermissaoNotificacao(){
+  if(!("Notification" in window)) return;
+  if(Notification.permission === "default" && !permissaoNotifJaPedida){
+    permissaoNotifJaPedida = true;
+    Notification.requestPermission().finally(()=> atualizarBotaoNotif());
+  }
+}
+
+// Dispara a notificação nativa do sistema operacional (aparece mesmo com
+// a aba minimizada ou em segundo plano, contanto que o navegador esteja
+// aberto). Requer permissão concedida — se negada ou ainda não decidida,
+// só o toast dentro da página é exibido.
+function mostrarNotificacaoNativa(titulo, corpo){
+  if(!("Notification" in window)) return;
+  if(Notification.permission !== "granted") return;
+  try{
+    const n = new Notification(titulo, {
+      body: corpo || "",
+      tag: "cargas-piso-" + Date.now(),
+      icon: "https://em-content.zobj.net/source/microsoft-teams/363/package_1f4e6.png"
+    });
+    n.onclick = ()=>{ window.focus(); n.close(); };
+  }catch(e){
+    console.error("Erro ao mostrar notificação nativa:", e);
+  }
+}
+
+// Botão de status/ativação manual das notificações — útil quando o
+// navegador bloqueou o pedido automático ou o usuário negou sem querer.
+function atualizarBotaoNotif(){
+  const btn = document.getElementById("btn-notif-status");
+  if(!btn) return;
+  if(!("Notification" in window)){
+    btn.textContent = "🔕 Notificações não suportadas neste navegador";
+    btn.disabled = true;
+    return;
+  }
+  if(Notification.permission === "granted"){
+    btn.textContent = "🔔 Notificações do sistema ativadas";
+    btn.disabled = true;
+  } else if(Notification.permission === "denied"){
+    btn.textContent = "🔕 Notificações bloqueadas — libere nas configurações do navegador";
+    btn.disabled = true;
+  } else {
+    btn.textContent = "🔔 Ativar notificações do sistema";
+    btn.disabled = false;
+  }
+}
+document.getElementById("btn-notif-status").addEventListener("click", ()=>{
+  if(!("Notification" in window)) return;
+  Notification.requestPermission().finally(atualizarBotaoNotif);
+});
+atualizarBotaoNotif();
 
 function horaAgora(){
   const d = new Date();
