@@ -371,23 +371,8 @@
       border:1px solid var(--linha);font-size:15px;
     }
 
-    /* ---- Seleção de Cargas — Distribuição vira cartão (fonte maior) ---- */
-    .cabecalho-selecao{display:none;}
-    .linha-selecao{
-      display:grid;grid-template-columns:1fr 1fr;gap:8px 14px;
-      padding:16px;position:relative;font-size:15px;
-      border-radius:6px;margin-bottom:2px;
-    }
-    .linha-selecao .campo-doca, .linha-selecao .campo-carga,
-    .linha-selecao .campo-volume, .linha-selecao .campo-sku{font-size:15.5px;}
-    .linha-selecao .campo-doca::before{content:"Doca ";color:var(--texto-fraco);font-size:10.5px;text-transform:uppercase;}
-    .linha-selecao .campo-carga::before{content:"Carga ";color:var(--texto-fraco);font-size:10.5px;text-transform:uppercase;}
-    .linha-selecao .campo-volume::before{content:"Vol ";color:var(--texto-fraco);font-size:10.5px;text-transform:uppercase;}
-    .linha-selecao .campo-sku::before{content:"SKU ";color:var(--texto-fraco);font-size:10.5px;text-transform:uppercase;}
-    .linha-selecao .campo-carga{font-size:17px;font-weight:700;color:var(--faixa);font-family:var(--mono);}
-    .linha-selecao .campo-fornecedor{grid-column:1 / -1;font-weight:600;font-size:16px;}
-    .linha-selecao .campo-status{grid-column:1 / -1;font-size:13px;margin-top:2px;}
-    .linha-selecao .bloco-circulo{grid-column:1 / -1;justify-content:flex-start;margin-top:8px;gap:10px;}
+    /* ---- Seleção de Cargas: ajustes finos de toque no celular ---- */
+    .linha-selecao{padding:16px;border-radius:6px;margin-bottom:2px;}
     .linha-selecao .circulo-dist{width:34px;height:34px;}
     .linha-selecao .hora-marcada{font-size:13px;}
 
@@ -474,22 +459,24 @@
   .aviso-permissao{font-size:11.5px;color:var(--texto-fraco);font-family:var(--mono);margin-bottom:10px;}
 
   .lista-selecao{background:var(--painel);border:1px solid var(--linha);}
-  .cabecalho-selecao{
-    display:grid;
-    grid-template-columns:80px 100px 1fr 90px 60px 70px 120px;
-    gap:8px;padding:9px 12px;
-    font-family:var(--disp);font-size:10.5px;letter-spacing:1px;text-transform:uppercase;
-    color:var(--faixa);background:var(--asfalto-2);border-bottom:2px solid var(--faixa);
-  }
+  /* ---- Seleção de Cargas — cartão de 2 colunas (igual em qualquer tela) ---- */
+  .cabecalho-selecao{display:none;}
   .linha-selecao{
-    display:grid;
-    grid-template-columns:80px 100px 1fr 90px 60px 70px 120px;
-    gap:8px;
+    display:grid;grid-template-columns:1fr 1fr;gap:8px 14px;
     align-items:center;
-    padding:10px 12px;
+    padding:16px;position:relative;font-size:15px;
     border-bottom:1px solid var(--linha);
-    font-size:12.5px;
   }
+  .linha-selecao .campo-doca, .linha-selecao .campo-carga,
+  .linha-selecao .campo-volume, .linha-selecao .campo-sku{font-size:15.5px;}
+  .linha-selecao .campo-doca::before{content:"Doca ";color:var(--texto-fraco);font-size:10.5px;text-transform:uppercase;}
+  .linha-selecao .campo-carga::before{content:"Carga ";color:var(--texto-fraco);font-size:10.5px;text-transform:uppercase;}
+  .linha-selecao .campo-volume::before{content:"Vol ";color:var(--texto-fraco);font-size:10.5px;text-transform:uppercase;}
+  .linha-selecao .campo-sku::before{content:"SKU ";color:var(--texto-fraco);font-size:10.5px;text-transform:uppercase;}
+  .linha-selecao .campo-carga{font-size:17px;font-weight:700;color:var(--faixa);font-family:var(--mono);}
+  .linha-selecao .campo-fornecedor{grid-column:1 / -1;font-weight:600;font-size:16px;}
+  .linha-selecao .campo-status{grid-column:1 / -1;font-size:13px;margin-top:2px;}
+  .linha-selecao .bloco-circulo{grid-column:1 / -1;justify-content:flex-start;margin-top:8px;gap:10px;}
   .linha-selecao:hover{background:rgba(244,180,0,0.05);}
   .linha-selecao.ja-distribuida{opacity:0.42;}
   .linha-selecao .col-num{font-family:var(--mono);}
@@ -607,6 +594,18 @@
 
   @media print{
     .secao-titulo .direita .botao, .linha-selecao .circulo-dist, .rodape-grade, .aviso-permissao{display:none!important;}
+    /* A Seleção de Cargas é uma tela de trabalho, não um relatório —
+       nunca aparece em nenhum dos três "prints/PDFs" abaixo. */
+    #secao-titulo-selecao, .lista-selecao{display:none!important;}
+    .rodape-acoes, .topo-direita .botao, .online-lista{display:none!important;}
+    /* Cada botão de imprimir marca o <body> com uma classe (ver JS) para
+       que só a seção correspondente apareça no PDF/impressão gerado. */
+    body.imprimir-so-piso #secao-grade,
+    body.imprimir-so-piso #secao-pend{display:none!important;}
+    body.imprimir-so-grade #secao-piso,
+    body.imprimir-so-grade #secao-pend{display:none!important;}
+    body.imprimir-so-pend #secao-piso,
+    body.imprimir-so-pend #secao-grade{display:none!important;}
   }
 </style>
 </head>
@@ -653,6 +652,7 @@
     </div>
   </div>
 
+  <div id="secao-piso">
   <div class="resumo">
     <div class="item"><div class="num" id="r-total-cargas">0</div><div class="lbl">Total de Cargas</div></div>
     <div class="item"><div class="num" id="r-etiquetadas">0</div><div class="lbl">Cargas Etiquetadas</div></div>
@@ -691,6 +691,7 @@
       </tfoot>
     </table>
   </div>
+  </div>
 
   <div class="rodape-acoes">
     <div style="display:flex;gap:10px;flex-wrap:wrap;">
@@ -707,7 +708,7 @@
   </div>
 
   <!-- ===================== SELEÇÃO DE CARGAS PARA DISTRIBUIÇÃO ===================== -->
-  <div class="secao-titulo">
+  <div class="secao-titulo" id="secao-titulo-selecao">
     Seleção de Cargas — Distribuição
     <div class="direita">
       <label style="font-size:10.5px;color:var(--texto-fraco);letter-spacing:1px;text-transform:uppercase;">Turno</label>
@@ -727,6 +728,7 @@
   </div>
 
   <!-- ===================== GRADE DE DISTRIBUIÇÃO ===================== -->
+  <div id="secao-grade">
   <div class="secao-titulo">
     Grade de Distribuição
     <div class="direita">
@@ -776,12 +778,15 @@
     <button class="botao" id="btn-grade-baixar-excel">Baixar Excel</button>
     <button class="botao" id="btn-grade-imprimir">Imprimir Grade</button>
   </div>
+  </div>
 
   <!-- ===================== PENDÊNCIAS AGRUPAMENTO CROSS ===================== -->
+  <div id="secao-pend">
   <div class="secao-titulo">
     Pendências Agrupamento Cross
     <div class="direita">
       <button class="botao" id="btn-pend-abrir-colar" style="display:none;">Colar Planilha</button>
+      <button class="botao" id="btn-pend-imprimir" style="display:none;">Imprimir / Salvar PDF</button>
     </div>
   </div>
   <p class="aviso-permissao" id="aviso-permissao-pend"></p>
@@ -804,6 +809,7 @@
     </table>
   </div>
   <div class="pend-vazio" id="pend-vazio">Nenhuma planilha de pendências colada ainda.</div>
+  </div>
 </div>
 
 <!-- ===================== MODAL: ADICIONAR CARGA NA GRADE (ADM / ENCARREGADO) ===================== -->
@@ -1071,6 +1077,14 @@ function atualizarExibicaoCargo(){
   if(btnGradeAdd) btnGradeAdd.style.display = podeAdicionarNaGrade() ? "inline-block" : "none";
   const btnPendColar = document.getElementById("btn-pend-abrir-colar");
   if(btnPendColar) btnPendColar.style.display = podeDistribuir() ? "inline-block" : "none";
+  // Salvar/imprimir (window.print, que permite "Salvar como PDF") só para
+  // Conferente, Encarregado e ADM — Ajudante de Depósito não vê os botões.
+  const btnImprimir = document.getElementById("btn-imprimir");
+  if(btnImprimir) btnImprimir.style.display = podeDistribuir() ? "inline-block" : "none";
+  const btnGradeImprimir = document.getElementById("btn-grade-imprimir");
+  if(btnGradeImprimir) btnGradeImprimir.style.display = podeDistribuir() ? "inline-block" : "none";
+  const btnPendImprimir = document.getElementById("btn-pend-imprimir");
+  if(btnPendImprimir) btnPendImprimir.style.display = podeDistribuir() ? "inline-block" : "none";
   atualizarAvisoPermissaoPend();
 }
 
@@ -1754,8 +1768,25 @@ function renderizarPendencias(){
   });
 }
 
-/* ---------------------- IMPRIMIR ---------------------- */
-document.getElementById("btn-imprimir").addEventListener("click", ()=> window.print());
+/* ---------------------- IMPRIMIR / SALVAR PDF ----------------------
+   Cada botão marca o <body> com uma classe antes de chamar window.print()
+   (que no navegador oferece "Salvar como PDF"), assim o CSS de impressão
+   mostra só a seção pedida. A classe é removida depois, no "afterprint". */
+function imprimirSecao(classe){
+  document.body.classList.add(classe);
+  const limpar = ()=>{
+    document.body.classList.remove(classe);
+    window.removeEventListener("afterprint", limpar);
+  };
+  window.addEventListener("afterprint", limpar);
+  window.print();
+  // Reforço para navegadores que não disparam "afterprint" de forma
+  // confiável (ex.: alguns celulares).
+  setTimeout(limpar, 2000);
+}
+
+document.getElementById("btn-imprimir").addEventListener("click", ()=> imprimirSecao("imprimir-so-piso"));
+document.getElementById("btn-pend-imprimir").addEventListener("click", ()=> imprimirSecao("imprimir-so-pend"));
 
 /* ---------------------- ZERAR PAINEL (NOVO DIA) ---------------------- */
 // Apaga 100% das cargas (Cargas no Piso + Distribuição) e zera a
@@ -1878,11 +1909,21 @@ function mostrarToast(titulo, detalhe, tipo){
   }, 6000);
 }
 
+// Detecta o navegador Safari (desktop e iOS). No Safari as notificações
+// nativas não funcionam de forma confiável (iOS não suporta a API fora de
+// um PWA instalado, e o desktop tem restrições próprias), então tratamos
+// o Safari sempre como "não suportado", mesmo quando a API existe.
+function ehSafari(){
+  const ua = navigator.userAgent;
+  return /^((?!chrome|android|crios|fxios|edg|opr).)*safari/i.test(ua);
+}
+
 // Pede permissão de notificação do navegador/SO. Chamada a partir do
 // clique em "Entrar" (gesto do usuário) e também ao restaurar a sessão,
 // para cobrir quem já estava logado antes dessa função existir.
 let permissaoNotifJaPedida = false;
 function pedirPermissaoNotificacao(){
+  if(ehSafari()) return;
   if(!("Notification" in window)) return;
   if(Notification.permission === "default" && !permissaoNotifJaPedida){
     permissaoNotifJaPedida = true;
@@ -1895,6 +1936,7 @@ function pedirPermissaoNotificacao(){
 // aberto). Requer permissão concedida — se negada ou ainda não decidida,
 // só o toast dentro da página é exibido.
 function mostrarNotificacaoNativa(titulo, corpo){
+  if(ehSafari()) return;
   if(!("Notification" in window)) return;
   if(Notification.permission !== "granted") return;
   try{
@@ -1914,6 +1956,11 @@ function mostrarNotificacaoNativa(titulo, corpo){
 function atualizarBotaoNotif(){
   const btn = document.getElementById("btn-notif-status");
   if(!btn) return;
+  if(ehSafari()){
+    btn.textContent = "🔕 Notificações não suportadas no Safari";
+    btn.disabled = true;
+    return;
+  }
   if(!("Notification" in window)){
     btn.textContent = "🔕 Notificações não suportadas neste navegador";
     btn.disabled = true;
@@ -1931,7 +1978,7 @@ function atualizarBotaoNotif(){
   }
 }
 document.getElementById("btn-notif-status").addEventListener("click", ()=>{
-  if(!("Notification" in window)) return;
+  if(ehSafari() || !("Notification" in window)) return;
   Notification.requestPermission().finally(atualizarBotaoNotif);
 });
 atualizarBotaoNotif();
@@ -2250,7 +2297,7 @@ document.getElementById("btn-grade-baixar-excel").addEventListener("click", ()=>
   XLSX.writeFile(wb, `distribuicao_${turno}_${Date.now()}.xlsx`);
 });
 
-document.getElementById("btn-grade-imprimir").addEventListener("click", ()=> window.print());
+document.getElementById("btn-grade-imprimir").addEventListener("click", ()=> imprimirSecao("imprimir-so-grade"));
 </script>
 </body>
 </html>
