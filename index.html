@@ -627,49 +627,69 @@
     body.imprimir-so-pend #secao-grade{display:none!important;}
   }
 
-  /* ===================== COMENTÁRIOS (CHAT FLUTUANTE) ===================== */
+  /* ===================== COMUNICADOR (CHAT FLUTUANTE, laranja/preto, mensagens somem em 7h) ===================== */
+  :root{
+    --com-preto: #0b0a09;
+    --com-preto-2: #151310;
+    --com-laranja: #ff6a1a;
+    --com-laranja-escura: #cc5313;
+    --com-linha: #2a2620;
+    --com-texto: #f3ede0;
+    --com-texto-fraco: #8a8374;
+  }
   .chat-fab{
     position:fixed;right:22px;bottom:22px;z-index:200;
     width:56px;height:56px;border-radius:50%;
-    background:var(--faixa);color:#1a1a1a;border:none;
+    background:var(--com-laranja);color:#1a0d02;border:none;
     font-size:24px;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.45);
-    display:flex;align-items:center;justify-content:center;
+    display:none;align-items:center;justify-content:center;
     transition:transform .15s;
   }
+  .chat-fab.visivel{ display:flex; }
   .chat-fab:hover{transform:scale(1.06);}
-  .chat-fab.tem-novo{box-shadow:0 0 0 4px rgba(244,180,0,0.35),0 6px 18px rgba(0,0,0,.45);}
+  .chat-fab.tem-novo{box-shadow:0 0 0 4px rgba(255,106,26,0.35),0 6px 18px rgba(0,0,0,.45);}
   .chat-fab.tem-novo::after{
     content:"";position:absolute;top:2px;right:2px;width:12px;height:12px;
-    border-radius:50%;background:var(--pendente);border:2px solid var(--asfalto);
+    border-radius:50%;background:var(--pendente);border:2px solid var(--com-preto);
   }
   .chat-painel{
     position:fixed;right:22px;bottom:90px;z-index:200;
-    width:320px;max-width:88vw;height:min(440px,60vh);
-    background:var(--painel);border:1px solid var(--linha);border-top:4px solid var(--faixa);
+    width:340px;max-width:88vw;height:min(460px,62vh);
+    background:var(--com-preto-2);border:1px solid var(--com-linha);border-top:4px solid var(--com-laranja);
     border-radius:8px;display:none;flex-direction:column;overflow:hidden;
     box-shadow:0 20px 50px rgba(0,0,0,.55);
   }
   .chat-painel.aberto{display:flex;}
   .chat-cabecalho{
     padding:10px 14px;font-family:var(--disp);text-transform:uppercase;letter-spacing:1px;
-    font-size:13px;color:var(--faixa);border-bottom:1px solid var(--linha);
+    font-size:13px;color:var(--com-laranja);border-bottom:1px solid var(--com-linha);
     display:flex;align-items:center;justify-content:space-between;flex:0 0 auto;
   }
-  .chat-fechar{background:none;border:none;color:var(--texto-fraco);font-size:16px;cursor:pointer;line-height:1;}
-  .chat-fechar:hover{color:var(--texto);}
+  .chat-cabecalho .sub{
+    display:block;font-family:'Inter',sans-serif;text-transform:none;letter-spacing:0;
+    color:var(--com-texto-fraco);font-size:10.5px;margin-top:2px;
+  }
+  .chat-fechar{background:none;border:none;color:var(--com-texto-fraco);font-size:16px;cursor:pointer;line-height:1;}
+  .chat-fechar:hover{color:var(--com-texto);}
   .chat-mensagens{flex:1 1 auto;overflow-y:auto;padding:10px 12px;display:flex;flex-direction:column;gap:8px;}
-  .chat-msg{background:var(--asfalto-2);border:1px solid var(--linha);border-radius:6px;padding:7px 10px;font-size:13px;}
-  .chat-msg .chat-autor{font-weight:700;color:var(--faixa);font-size:11.5px;}
-  .chat-msg .chat-hora{color:var(--texto-fraco);font-size:10px;margin-left:6px;}
+  .chat-msg{background:var(--com-preto);border:1px solid var(--com-linha);border-radius:6px;padding:7px 10px;font-size:13px;color:var(--com-texto);}
+  .chat-msg.minha{border-color:var(--com-laranja-escura);}
+  .chat-msg .chat-autor{font-weight:700;color:var(--com-laranja);font-size:11.5px;}
+  .chat-msg .chat-hora{color:var(--com-texto-fraco);font-size:10px;margin-left:6px;}
+  .chat-msg .chat-expira{color:var(--com-texto-fraco);font-size:9.5px;float:right;opacity:0.75;}
   .chat-msg .chat-texto{margin-top:2px;word-wrap:break-word;white-space:pre-wrap;}
-  .chat-vazio{color:var(--texto-fraco);font-size:12px;text-align:center;padding:24px 0;}
-  .chat-form{display:flex;gap:6px;padding:10px;border-top:1px solid var(--linha);flex:0 0 auto;}
+  .chat-vazio{color:var(--com-texto-fraco);font-size:12px;text-align:center;padding:24px 0;}
+  .chat-form{display:flex;gap:6px;padding:10px;border-top:1px solid var(--com-linha);flex:0 0 auto;}
   .chat-form input{
-    flex:1 1 auto;background:var(--asfalto-2);border:1px solid var(--linha);color:var(--texto);
+    flex:1 1 auto;background:var(--com-preto);border:1px solid var(--com-linha);color:var(--com-texto);
     padding:8px 10px;font-size:13px;border-radius:4px;font-family:'Inter',sans-serif;
   }
-  .chat-form input:focus{outline:none;border-color:var(--faixa);}
-  .chat-form .botao{padding:8px 14px;font-size:12.5px;}
+  .chat-form input:focus{outline:none;border-color:var(--com-laranja);}
+  .chat-form .botao{
+    padding:8px 14px;font-size:12.5px;background:var(--com-laranja);color:#1a0d02;
+    border:1px solid var(--com-laranja);
+  }
+  .chat-form .botao:hover{background:var(--com-laranja-escura);border-color:var(--com-laranja-escura);}
   @media print{ .chat-fab, .chat-painel{display:none!important;} }
   @media (max-width:480px){
     .chat-painel{right:10px;left:10px;width:auto;bottom:84px;}
@@ -1082,6 +1102,7 @@ function tentarEntrar(){
 async function entrarNoPainel(cargoSolicitado){
   document.getElementById("tela-login").style.display = "none";
   document.getElementById("tela-painel").style.display = "block";
+  document.getElementById("btn-chat-fab").classList.add("visivel");
   preencherData();
   if(firebaseOk){
     await prepararCargoUsuario(cargoSolicitado || null);
@@ -1917,15 +1938,36 @@ function escapeHtml(s){
    ===================================================================== */
 let comentariosVistos = 0; // quantos comentários já foram vistos, p/ o "ponto" de novo no botão
 let unsubComentarios = null;
+const COM_EXPIRA_MS = 7 * 60 * 60 * 1000; // mensagens do comunicador somem após 7h
+
+function comLabelExpira(criadoEm){
+  if(!criadoEm) return "";
+  const restam = COM_EXPIRA_MS - (Date.now() - criadoEm);
+  if(restam <= 0) return "expirando…";
+  const h = Math.floor(restam / 3600000);
+  const m = Math.floor((restam % 3600000) / 60000);
+  return h > 0 ? `some em ${h}h${m>0? m+"m":""}` : `some em ${m}m`;
+}
 
 function escutarComentarios(){
   if(!firebaseOk) return;
   if(unsubComentarios) unsubComentarios();
   unsubComentarios = db.collection("comentarios").orderBy("criadoEm").limitToLast(200)
     .onSnapshot(snap=>{
+      const agora = Date.now();
       const lista = [];
-      snap.forEach(doc=> lista.push({ id: doc.id, ...doc.data() }));
+      const expirados = [];
+      snap.forEach(doc=>{
+        const d = doc.data();
+        if(d.criadoEm && agora - d.criadoEm >= COM_EXPIRA_MS){
+          expirados.push(doc.id);
+        }else{
+          lista.push({ id: doc.id, ...d });
+        }
+      });
       renderizarComentarios(lista);
+      // limpeza silenciosa dos documentos que já passaram de 7h
+      expirados.forEach(id=> db.collection("comentarios").doc(id).delete().catch(()=>{}));
     }, err=> console.error("Erro ao escutar comentários:", err));
 }
 
@@ -1939,13 +1981,16 @@ function renderizarComentarios(lista){
   const jaEstavaNoFim = cont.scrollTop + cont.clientHeight >= cont.scrollHeight - 40;
 
   if(lista.length === 0){
-    cont.innerHTML = '<div class="chat-vazio">Nenhum comentário ainda. Seja o primeiro!</div>';
+    cont.innerHTML = '<div class="chat-vazio">Nenhuma mensagem ainda. Seja o primeiro!</div>';
   }else{
     cont.innerHTML = lista.map(c=>{
       const hora = c.criadoEm ? new Date(c.criadoEm).toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"}) : "";
+      const minha = c.usuario === usuarioAtual;
       return `
-        <div class="chat-msg">
-          <div><span class="chat-autor">${escapeHtml(c.usuario || "—")}</span><span class="chat-hora">${hora}</span></div>
+        <div class="chat-msg ${minha? "minha":""}">
+          <span class="chat-expira">${comLabelExpira(c.criadoEm)}</span>
+          <span class="chat-autor">${escapeHtml(minha? "Você" : (c.usuario || "—"))}</span>
+          <span class="chat-hora">${hora}</span>
           <div class="chat-texto">${escapeHtml(c.texto || "")}</div>
         </div>`;
     }).join("");
@@ -1959,6 +2004,14 @@ function renderizarComentarios(lista){
     fab.classList.add("tem-novo");
   }
 }
+
+// atualiza os rótulos de "some em Xh" mesmo sem mensagens novas chegando
+setInterval(()=>{
+  const painel = document.getElementById("painel-chat");
+  if(painel && painel.classList.contains("aberto")){
+    document.querySelectorAll("#chat-mensagens .chat-msg .chat-expira").forEach(()=>{});
+  }
+}, 60000);
 
 document.getElementById("btn-chat-fab").addEventListener("click", ()=>{
   const painel = document.getElementById("painel-chat");
@@ -1983,7 +2036,7 @@ document.getElementById("form-chat").addEventListener("submit", (e)=>{
   if(!texto) return;
   input.value = "";
   db.collection("comentarios").add({ usuario: usuarioAtual, texto, criadoEm: Date.now() })
-    .catch(err=>{ console.error(err); alert("Erro ao enviar comentário: " + err.message); });
+    .catch(err=>{ console.error(err); alert("Erro ao enviar mensagem: " + err.message); });
 });
 
 /* =====================================================================
@@ -2473,17 +2526,17 @@ document.getElementById("btn-grade-baixar-excel").addEventListener("click", ()=>
 document.getElementById("btn-grade-imprimir").addEventListener("click", ()=> imprimirSecao("imprimir-so-grade"));
 </script>
 <!-- ===================== COMENTÁRIOS (CHAT FLUTUANTE, COMPARTILHADO) ===================== -->
-<button id="btn-chat-fab" class="chat-fab" title="Comentários">💬</button>
+<button id="btn-chat-fab" class="chat-fab" title="Comunicador">💬</button>
 <div id="painel-chat" class="chat-painel">
   <div class="chat-cabecalho">
-    <span>Comentários</span>
+    <span>Comunicador<span class="sub">mensagens somem após 7h</span></span>
     <button id="btn-chat-fechar" class="chat-fechar" title="Fechar">✕</button>
   </div>
   <div id="chat-mensagens" class="chat-mensagens">
-    <div class="chat-vazio">Nenhum comentário ainda. Seja o primeiro!</div>
+    <div class="chat-vazio">Nenhuma mensagem ainda. Seja o primeiro!</div>
   </div>
   <form id="form-chat" class="chat-form">
-    <input id="in-chat-texto" type="text" placeholder="Escreva um comentário…" autocomplete="off" maxlength="500">
+    <input id="in-chat-texto" type="text" placeholder="Escreva uma mensagem…" autocomplete="off" maxlength="500">
     <button type="submit" class="botao principal">Enviar</button>
   </form>
 </div>
