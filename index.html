@@ -1173,6 +1173,17 @@ let pendenciasAtual = null; // último documento de pendências lido do Firestor
 let primeiraCargaSnapshot = true; // evita notificação de distribuição ao carregar a página
 let primeiraPendSnapshot = true; // evita notificação de pendência tratada ao carregar a página
 
+// Nenhuma chamada ao Firebase pode ficar esperando para sempre sem dar
+// nenhum retorno. Se travar (banco não criado, regras bloqueando,
+// bloqueador de anúncios etc.), depois de 15s isso vira um erro claro
+// em vez de deixar o botão travado em "Entrando…" sem explicação.
+function comTimeout(promessa, segundos, mensagem){
+  return Promise.race([
+    promessa,
+    new Promise((_, rejeitar)=> setTimeout(()=> rejeitar(new Error(mensagem)), segundos*1000))
+  ]);
+}
+
 function iniciarFirebase(){
   try{
     firebase.initializeApp(firebaseConfig);
@@ -1235,20 +1246,25 @@ async function tentarEntrar(){
   const cargoSolicitado = cargoPelaSenha(senhaCargoDigitada); // null, "ADM", "Encarregado" ou "Conferente"
   try{
     pedirPermissaoNotificacao(); // pedido feito dentro do clique do usuário (gesto)
-    await entrarNoPainel(cargoSolicitado);
+    await comTimeout(
+      entrarNoPainel(cargoSolicitado),
+      15,
+      "Tempo esgotado ao falar com o Firebase. Confira: 1) se o Firestore Database foi criado no console do Firebase, 2) se as Regras do Firestore permitem leitura/escrita, 3) se algum bloqueador de anúncios/extensão não está bloqueando o Firebase."
+    );
     sessionStorage.setItem("cargasPiso_usuario", usuario);
     sessionStorage.setItem("cargasPiso_cargoSolicitado", cargoSolicitado || "");
   }catch(e){
-    // Se algo falhar ao conectar (ex.: sem permissão no Firestore, sem
-    // internet), volta para a tela de login em vez de deixar o app
-    // travado numa tela em branco/quebrada — e mostra o motivo real.
+    // Se algo falhar ao conectar (ex.: sem permissão no Firestore, banco
+    // não criado, bloqueador de anúncios) ou travar por 15s sem resposta,
+    // volta para a tela de login em vez de deixar o app travado numa tela
+    // em branco/quebrada — e mostra o motivo real.
     console.error("Erro ao entrar no painel:", e);
     document.getElementById("tela-painel").style.display = "none";
     document.getElementById("tela-login").style.display = "flex";
     document.getElementById("btn-chat-fab").classList.remove("visivel");
     document.getElementById("atalho-rapido").classList.remove("visivel");
     usuarioAtual = null;
-    erro.textContent = "Não foi possível entrar: " + (e && e.message ? e.message : "erro desconhecido") + ". Verifique sua internet e tente de novo.";
+    erro.textContent = "Não foi possível entrar: " + (e && e.message ? e.message : "erro desconhecido");
   }finally{
     btn.disabled = false;
     btn.textContent = textoOriginalBtn;
@@ -1357,7 +1373,19 @@ window.addEventListener("load", ()=>{
     usuarioAtual = salvo;
     pedirPermissaoNotificacao();
     const cargoSolicitado = sessionStorage.getItem("cargasPiso_cargoSolicitado") || null;
-    entrarNoPainel(cargoSolicitado);
+    comTimeout(
+      entrarNoPainel(cargoSolicitado),
+      15,
+      "Tempo esgotado ao falar com o Firebase. Confira: 1) se o Firestore Database foi criado no console do Firebase, 2) se as Regras do Firestore permitem leitura/escrita, 3) se algum bloqueador de anúncios/extensão não está bloqueando o Firebase."
+    ).catch(e=>{
+      console.error("Erro ao retomar sessão:", e);
+      document.getElementById("tela-painel").style.display = "none";
+      document.getElementById("tela-login").style.display = "flex";
+      document.getElementById("btn-chat-fab").classList.remove("visivel");
+      document.getElementById("atalho-rapido").classList.remove("visivel");
+      usuarioAtual = null;
+      document.getElementById("erro-login").textContent = "Não foi possível reconectar: " + (e && e.message ? e.message : "erro desconhecido");
+    });
   }
 });
 
