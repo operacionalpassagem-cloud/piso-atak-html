@@ -1060,6 +1060,43 @@
   </div>
 </div>
 
+<!-- ===================== COMENTÁRIOS (CHAT FLUTUANTE, COMPARTILHADO) ===================== -->
+<!-- IMPORTANTE: este bloco (e o atalho rápido) precisa vir ANTES do <script>
+     principal — o script busca esses elementos com getElementById() assim
+     que é executado, e se eles ainda não existirem no HTML nesse momento
+     (por estarem depois do </script>), o navegador lança um erro logo ali
+     e TODO o restante do script (tudo que vem depois dessa linha) deixa de
+     rodar silenciosamente. Foi isso que quebrou a Qtd. Produtivos/Estocado
+     Full/Mix, a Colar Planilha e outras funções — não tinha nada a ver com
+     a conexão do Firebase em si. -->
+<button id="btn-chat-fab" class="chat-fab" title="Comunicador">💬</button>
+
+<!-- ===================== ATALHO RÁPIDO DE NAVEGAÇÃO ===================== -->
+<nav id="atalho-rapido" class="atalho-rapido">
+  <button type="button" class="atalho-item" data-alvo="secao-piso" title="Ir para Cargas no Piso">
+    <span class="atalho-icone">📋</span><span class="atalho-texto">Cargas no Piso</span>
+  </button>
+  <button type="button" class="atalho-item" data-alvo="secao-grade" title="Ir para Grade de Distribuição">
+    <span class="atalho-icone">📦</span><span class="atalho-texto">Grade de Distribuição</span>
+  </button>
+  <button type="button" class="atalho-item" data-alvo="secao-pend" title="Ir para Pendências">
+    <span class="atalho-icone">⏳</span><span class="atalho-texto">Pendências</span>
+  </button>
+</nav>
+<div id="painel-chat" class="chat-painel">
+  <div class="chat-cabecalho">
+    <span>Comunicador<span class="sub">mensagens somem após 7h</span></span>
+    <button id="btn-chat-fechar" class="chat-fechar" title="Fechar">✕</button>
+  </div>
+  <div id="chat-mensagens" class="chat-mensagens">
+    <div class="chat-vazio">Nenhuma mensagem ainda. Seja o primeiro!</div>
+  </div>
+  <form id="form-chat" class="chat-form">
+    <input id="in-chat-texto" type="text" placeholder="Escreva uma mensagem…" autocomplete="off" maxlength="500">
+    <button type="submit" class="botao principal">Enviar</button>
+  </form>
+</div>
+
 <script>
 /* =====================================================================
    CONFIGURAÇÃO DO FIREBASE
@@ -2745,34 +2782,6 @@ document.getElementById("btn-grade-baixar-excel").addEventListener("click", ()=>
 
 document.getElementById("btn-grade-imprimir").addEventListener("click", ()=> imprimirSecao("imprimir-so-grade"));
 </script>
-<!-- ===================== COMENTÁRIOS (CHAT FLUTUANTE, COMPARTILHADO) ===================== -->
-<button id="btn-chat-fab" class="chat-fab" title="Comunicador">💬</button>
-
-<!-- ===================== ATALHO RÁPIDO DE NAVEGAÇÃO ===================== -->
-<nav id="atalho-rapido" class="atalho-rapido">
-  <button type="button" class="atalho-item" data-alvo="secao-piso" title="Ir para Cargas no Piso">
-    <span class="atalho-icone">📋</span><span class="atalho-texto">Cargas no Piso</span>
-  </button>
-  <button type="button" class="atalho-item" data-alvo="secao-grade" title="Ir para Grade de Distribuição">
-    <span class="atalho-icone">📦</span><span class="atalho-texto">Grade de Distribuição</span>
-  </button>
-  <button type="button" class="atalho-item" data-alvo="secao-pend" title="Ir para Pendências">
-    <span class="atalho-icone">⏳</span><span class="atalho-texto">Pendências</span>
-  </button>
-</nav>
-<div id="painel-chat" class="chat-painel">
-  <div class="chat-cabecalho">
-    <span>Comunicador<span class="sub">mensagens somem após 7h</span></span>
-    <button id="btn-chat-fechar" class="chat-fechar" title="Fechar">✕</button>
-  </div>
-  <div id="chat-mensagens" class="chat-mensagens">
-    <div class="chat-vazio">Nenhuma mensagem ainda. Seja o primeiro!</div>
-  </div>
-  <form id="form-chat" class="chat-form">
-    <input id="in-chat-texto" type="text" placeholder="Escreva uma mensagem…" autocomplete="off" maxlength="500">
-    <button type="submit" class="botao principal">Enviar</button>
-  </form>
-</div>
 
 </body>
 </html>
