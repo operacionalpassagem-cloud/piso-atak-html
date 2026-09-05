@@ -269,15 +269,60 @@
   .aviso-sync{font-size:11.5px;color:var(--texto-fraco);font-family:var(--mono);}
   .aviso-sync.ativo{color:#3fd47a;}
 
+  /* ===================== VISUALIZAÇÃO: GRADE x 2 COLUNAS (CARGAS NO PISO) ===================== */
+  .piso-vista-toggle{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px;}
+  .piso-vista-toggle .rotulo-vista{
+    font-family:var(--disp);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--texto-fraco);
+  }
+  .vista-btn.ativo{background:var(--faixa);color:#1a1a1a;border-color:var(--faixa);font-weight:600;}
+  .piso-colunas{display:flex;gap:16px;align-items:flex-start;}
+  .piso-coluna{flex:1 1 0;min-width:0;}
+  .piso-coluna-titulo{
+    font-family:var(--disp);letter-spacing:1px;text-transform:uppercase;font-size:12.5px;
+    color:var(--faixa);background:var(--asfalto-2);border:1px solid var(--linha);border-bottom:none;
+    padding:9px 12px;display:flex;justify-content:space-between;align-items:center;
+  }
+  .piso-coluna-titulo .contagem{
+    font-family:var(--mono);background:var(--painel-2);color:var(--texto);padding:2px 8px;border-radius:10px;font-size:11px;
+  }
+  .piso-coluna.coluna-etiquetada .piso-coluna-titulo{color:#7de3a4;}
+  @media (max-width:960px){ .piso-colunas{flex-direction:column;} }
+
+  /* ===================== ATALHO RÁPIDO DE NAVEGAÇÃO ===================== */
+  .atalho-rapido{
+    position:fixed;top:50%;right:0;transform:translateY(-50%);z-index:150;
+    display:none;flex-direction:column;gap:2px;
+    background:var(--painel);border:1px solid var(--linha);border-right:none;
+    border-radius:8px 0 0 8px;overflow:hidden;box-shadow:-4px 4px 16px rgba(0,0,0,.4);
+  }
+  .atalho-rapido.visivel{display:flex;}
+  .atalho-item{
+    display:flex;align-items:center;gap:8px;padding:10px 14px 10px 12px;
+    color:var(--texto);text-decoration:none;font-family:var(--disp);font-size:11.5px;
+    letter-spacing:.5px;text-transform:uppercase;border-left:3px solid transparent;
+    white-space:nowrap;transition:background .15s;cursor:pointer;background:none;border:none;border-left:3px solid transparent;
+  }
+  .atalho-item:hover{background:var(--painel-2);border-left-color:var(--faixa);color:var(--faixa);}
+  .atalho-icone{font-size:15px;}
+  @media print{ .atalho-rapido{display:none!important;} }
+  @media (max-width:760px){
+    .atalho-rapido{top:auto;bottom:84px;right:8px;transform:none;border-radius:8px;flex-direction:row;}
+    .atalho-item{padding:10px;border-left:none;border-bottom:3px solid transparent;}
+    .atalho-item:hover{border-left-color:transparent;border-bottom-color:var(--faixa);}
+    .atalho-texto{display:none;}
+  }
+
   /* ===================== IMPRESSÃO ===================== */
   @media print{
     body{background:#fff;color:#000;}
-    .barra-topo, .rodape-acoes, .resumo .item .lbl, .btn-remover, .col-remover, .online-lista, .topo-direita .botao{display:none!important;}
+    .barra-topo, .rodape-acoes, .resumo .item .lbl, .btn-remover, .col-remover, .online-lista, .topo-direita .botao, .piso-vista-toggle{display:none!important;}
     .caixa-tabela{border:1px solid #000;}
     thead th{background:#eee!important;color:#000!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
     td .cel, td select.cel{color:#000!important;}
     .status-etiquetada,.status-parcial,.status-parcial-dist,.status-processo,.status-pendente,.status-aguardando,.status-conferencia{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
     table.grade td.cel-hora-dist input.cel{border:none!important;color:#000!important;background:transparent!important;}
+    #vista-grade-wrap{display:block!important;}
+    #vista-colunas-wrap{display:none!important;}
   }
 
   @media (max-width:760px){
@@ -302,76 +347,76 @@
 
     /* ---- Tabela "Cargas no Piso" vira lista de cartões (fonte maior) ---- */
     .caixa-tabela{overflow-x:visible;border:none;background:transparent;}
-    table#tabela-cargas{min-width:0;}
-    #tabela-cargas thead{display:none;}
-    #tabela-cargas tfoot{display:none;}
-    #tabela-cargas, #tabela-cargas tbody{display:block;width:100%;}
-    #tabela-cargas tbody tr{
+    table.tabela-piso{min-width:0;}
+    .tabela-piso thead{display:none;}
+    .tabela-piso tfoot{display:none;}
+    .tabela-piso, .tabela-piso tbody{display:block;width:100%;}
+    .tabela-piso tbody tr{
       display:flex;flex-direction:column;position:relative;
       background:var(--painel);border:1px solid var(--linha);border-left:4px solid var(--faixa);
       border-radius:6px;margin-bottom:16px;padding:16px 16px 6px;
       box-shadow:0 3px 12px rgba(0,0,0,.3);
     }
-    #tabela-cargas tbody td{
+    .tabela-piso tbody td{
       display:flex;align-items:center;justify-content:space-between;gap:12px;
       border-bottom:1px dashed var(--linha);padding:12px 0;
       font-size:15.5px;order:20;
     }
-    #tabela-cargas tbody td:last-child{border-bottom:none;}
-    #tabela-cargas tbody td::before{
+    .tabela-piso tbody td:last-child{border-bottom:none;}
+    .tabela-piso tbody td::before{
       content:attr(data-label);
       font-family:var(--disp);font-size:11.5px;letter-spacing:1px;text-transform:uppercase;
       color:var(--texto-fraco);flex:0 0 auto;
     }
-    #tabela-cargas tbody td .cel{width:auto;flex:1 1 auto;text-align:right;font-size:15.5px;padding:6px 4px;}
-    #tabela-cargas tbody td.col-num .cel{text-align:right;font-size:16px;}
-    #tabela-cargas tbody td select.cel{text-align:right;direction:rtl;font-size:14.5px;}
+    .tabela-piso tbody td .cel{width:auto;flex:1 1 auto;text-align:right;font-size:15.5px;padding:6px 4px;}
+    .tabela-piso tbody td.col-num .cel{text-align:right;font-size:16px;}
+    .tabela-piso tbody td select.cel{text-align:right;direction:rtl;font-size:14.5px;}
 
     /* Carga e Fornecedor viram o "cabeçalho" do cartão, em destaque */
-    #tabela-cargas tbody td[data-label="Carga"]{
+    .tabela-piso tbody td[data-label="Carga"]{
       order:1;border-bottom:none;padding:0 0 6px;
     }
-    #tabela-cargas tbody td[data-label="Carga"]::before{font-size:11px;}
-    #tabela-cargas tbody td[data-label="Carga"] .cel{
+    .tabela-piso tbody td[data-label="Carga"]::before{font-size:11px;}
+    .tabela-piso tbody td[data-label="Carga"] .cel{
       font-size:23px;font-weight:700;color:var(--faixa);font-family:var(--mono);text-align:right;
     }
-    #tabela-cargas tbody td[data-label="Fornecedor"]{
+    .tabela-piso tbody td[data-label="Fornecedor"]{
       order:2;flex-direction:column;align-items:flex-start;gap:2px;
       padding:0 0 12px;margin-bottom:8px;border-bottom:1px solid var(--linha);
     }
-    #tabela-cargas tbody td[data-label="Fornecedor"]::before{font-size:10.5px;}
-    #tabela-cargas tbody td[data-label="Fornecedor"] .cel{
+    .tabela-piso tbody td[data-label="Fornecedor"]::before{font-size:10.5px;}
+    .tabela-piso tbody td[data-label="Fornecedor"] .cel{
       font-size:16.5px;font-weight:600;text-align:left;color:var(--texto);width:100%;padding:2px 0 0;
     }
 
     /* Status em destaque, seletor grande e fácil de tocar */
-    #tabela-cargas tbody td[data-label="Status"]{
+    .tabela-piso tbody td[data-label="Status"]{
       order:3;flex-direction:column;align-items:stretch;gap:6px;padding:12px 0;
     }
-    #tabela-cargas tbody td[data-label="Status"] select.cel{
+    .tabela-piso tbody td[data-label="Status"] select.cel{
       font-size:15px;padding:12px 10px;text-align:left;direction:ltr;font-weight:700;width:100%;
     }
 
     /* Observação: texto livre, fica embaixo e por extenso */
-    #tabela-cargas tbody td[data-label="Obs."]{
+    .tabela-piso tbody td[data-label="Obs."]{
       order:19;flex-direction:column;align-items:flex-start;gap:4px;
     }
-    #tabela-cargas tbody td[data-label="Obs."] .cel{text-align:left;font-size:14.5px;width:100%;}
+    .tabela-piso tbody td[data-label="Obs."] .cel{text-align:left;font-size:14.5px;width:100%;}
 
-    #tabela-cargas tbody td[data-label="Produtivo"]{order:4;}
-    #tabela-cargas tbody td[data-label="Doca"]{order:5;}
-    #tabela-cargas tbody td[data-label="Liberação"]{order:6;}
-    #tabela-cargas tbody td[data-label="Hora"]{order:7;}
-    #tabela-cargas tbody td[data-label="D-1"]{order:8;}
-    #tabela-cargas tbody td[data-label="Volume"]{order:9;}
-    #tabela-cargas tbody td[data-label="SKU"]{order:10;}
-    #tabela-cargas tbody td[data-label="Departamento"]{order:11;}
+    .tabela-piso tbody td[data-label="Produtivo"]{order:4;}
+    .tabela-piso tbody td[data-label="Doca"]{order:5;}
+    .tabela-piso tbody td[data-label="Liberação"]{order:6;}
+    .tabela-piso tbody td[data-label="Hora"]{order:7;}
+    .tabela-piso tbody td[data-label="D-1"]{order:8;}
+    .tabela-piso tbody td[data-label="Volume"]{order:9;}
+    .tabela-piso tbody td[data-label="SKU"]{order:10;}
+    .tabela-piso tbody td[data-label="Departamento"]{order:11;}
 
-    #tabela-cargas tbody td.col-remover{
+    .tabela-piso tbody td.col-remover{
       order:0;position:absolute;top:10px;right:10px;border-bottom:none;padding:0;width:auto;
     }
-    #tabela-cargas tbody td.col-remover::before{display:none;}
-    #tabela-cargas tbody .btn-remover{
+    .tabela-piso tbody td.col-remover::before{display:none;}
+    .tabela-piso tbody .btn-remover{
       width:30px;height:30px;border-radius:50%;background:var(--asfalto-2);
       border:1px solid var(--linha);font-size:15px;
     }
@@ -749,8 +794,15 @@
     <div class="item"><div class="num" id="r-data">—</div><div class="lbl" id="r-data-lbl">Data</div></div>
   </div>
 
+  <div class="piso-vista-toggle">
+    <span class="rotulo-vista">Visualização:</span>
+    <button class="botao vista-btn ativo" id="btn-vista-grade" type="button">▦ Grade Única</button>
+    <button class="botao vista-btn" id="btn-vista-colunas" type="button">▥ 2 Colunas</button>
+  </div>
+
+  <div id="vista-grade-wrap">
   <div class="caixa-tabela">
-    <table id="tabela-cargas">
+    <table class="tabela-piso" id="tabela-cargas">
       <thead>
         <tr>
           <th>Produtivo</th>
@@ -778,6 +830,40 @@
         </tr>
       </tfoot>
     </table>
+  </div>
+  </div>
+
+  <div id="vista-colunas-wrap" class="piso-colunas" style="display:none;">
+    <div class="piso-coluna">
+      <div class="piso-coluna-titulo"><span>Não Etiquetadas</span><span class="contagem" id="contagem-outras">0</span></div>
+      <div class="caixa-tabela">
+        <table class="tabela-piso" id="tabela-cargas-outras">
+          <thead>
+            <tr>
+              <th>Produtivo</th><th>Doca</th><th>Carga</th><th>Fornecedor</th><th>Liberação</th>
+              <th>Hora</th><th>D-1</th><th>Volume</th><th>SKU</th><th>Departamento</th><th>Status</th><th>Obs.</th>
+              <th class="col-remover"></th>
+            </tr>
+          </thead>
+          <tbody id="corpo-tabela-outras"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="piso-coluna coluna-etiquetada">
+      <div class="piso-coluna-titulo"><span>Carga Etiquetada</span><span class="contagem" id="contagem-etiquetadas">0</span></div>
+      <div class="caixa-tabela">
+        <table class="tabela-piso" id="tabela-cargas-etiquetadas">
+          <thead>
+            <tr>
+              <th>Produtivo</th><th>Doca</th><th>Carga</th><th>Fornecedor</th><th>Liberação</th>
+              <th>Hora</th><th>D-1</th><th>Volume</th><th>SKU</th><th>Departamento</th><th>Status</th><th>Obs.</th>
+              <th class="col-remover"></th>
+            </tr>
+          </thead>
+          <tbody id="corpo-tabela-etiquetadas"></tbody>
+        </table>
+      </div>
+    </div>
   </div>
   </div>
 
@@ -981,12 +1067,13 @@
    (Firebase Console → Configurações do projeto → Seus apps → SDK setup)
    ===================================================================== */
 const firebaseConfig = {
-  apiKey: "AIzaSyBufElH_OgW0zuB2njAUzHdhRbp_g7OhWo",
-  authDomain: "passagem-operacional.firebaseapp.com",
-  projectId: "passagem-operacional",
-  storageBucket: "passagem-operacional.firebasestorage.app",
-  messagingSenderId: "813263527466",
-  appId: "1:813263527466:web:d59bf1a46af5df3a916d53"
+  apiKey: "AIzaSyBYdATcEEPHl6Dx7PdAJb4leFFIVNSmrJA",
+  authDomain: "comunicativo-b31d7.firebaseapp.com",
+  projectId: "comunicativo-b31d7",
+  storageBucket: "comunicativo-b31d7.firebasestorage.app",
+  messagingSenderId: "579993458101",
+  appId: "1:579993458101:web:0c291218a546210c4df5fc",
+  measurementId: "G-8EKP1BNWGT"
 };
 
 const SENHA_CORRETA = "CD30SECOS";
@@ -1061,6 +1148,17 @@ function iniciarFirebase(){
 }
 iniciarFirebase();
 
+// Rede de segurança: qualquer erro não tratado em qualquer lugar do app
+// aparece como um toast (em vez de falhar em silêncio e deixar a tela
+// travada sem explicação nenhuma). Ajuda a diagnosticar problemas futuros.
+window.addEventListener("unhandledrejection", e=>{
+  console.error("Erro não tratado (promise):", e.reason);
+  try{ mostrarToast("Erro inesperado", (e.reason && e.reason.message) || String(e.reason), "erro"); }catch(_){}
+});
+window.addEventListener("error", e=>{
+  console.error("Erro não tratado:", e.error || e.message);
+});
+
 /* ---------------------- DATA / CABEÇALHO ---------------------- */
 function formatarDataHoje(){
   const hoje = new Date();
@@ -1082,27 +1180,49 @@ function preencherData(){
 /* ---------------------- LOGIN ---------------------- */
 document.getElementById("btn-entrar").addEventListener("click", tentarEntrar);
 document.getElementById("in-senha").addEventListener("keydown", e=>{ if(e.key==="Enter") tentarEntrar(); });
+document.getElementById("in-senha-cargo").addEventListener("keydown", e=>{ if(e.key==="Enter") tentarEntrar(); });
 
-function tentarEntrar(){
+async function tentarEntrar(){
   const usuario = document.getElementById("in-usuario").value.trim();
   const senha = document.getElementById("in-senha").value;
   const senhaCargoDigitada = document.getElementById("in-senha-cargo").value;
   const erro = document.getElementById("erro-login");
+  const btn = document.getElementById("btn-entrar");
   if(!usuario){ erro.textContent = "Digite seu nome de usuário."; return; }
   if(senha !== SENHA_CORRETA){ erro.textContent = "Senha incorreta."; return; }
   erro.textContent = "";
-  pedirPermissaoNotificacao(); // pedido feito dentro do clique do usuário (gesto)
+  btn.disabled = true;
+  const textoOriginalBtn = btn.textContent;
+  btn.textContent = "Entrando…";
   usuarioAtual = usuario;
   const cargoSolicitado = cargoPelaSenha(senhaCargoDigitada); // null, "ADM", "Encarregado" ou "Conferente"
-  sessionStorage.setItem("cargasPiso_usuario", usuario);
-  sessionStorage.setItem("cargasPiso_cargoSolicitado", cargoSolicitado || "");
-  entrarNoPainel(cargoSolicitado);
+  try{
+    pedirPermissaoNotificacao(); // pedido feito dentro do clique do usuário (gesto)
+    await entrarNoPainel(cargoSolicitado);
+    sessionStorage.setItem("cargasPiso_usuario", usuario);
+    sessionStorage.setItem("cargasPiso_cargoSolicitado", cargoSolicitado || "");
+  }catch(e){
+    // Se algo falhar ao conectar (ex.: sem permissão no Firestore, sem
+    // internet), volta para a tela de login em vez de deixar o app
+    // travado numa tela em branco/quebrada — e mostra o motivo real.
+    console.error("Erro ao entrar no painel:", e);
+    document.getElementById("tela-painel").style.display = "none";
+    document.getElementById("tela-login").style.display = "flex";
+    document.getElementById("btn-chat-fab").classList.remove("visivel");
+    document.getElementById("atalho-rapido").classList.remove("visivel");
+    usuarioAtual = null;
+    erro.textContent = "Não foi possível entrar: " + (e && e.message ? e.message : "erro desconhecido") + ". Verifique sua internet e tente de novo.";
+  }finally{
+    btn.disabled = false;
+    btn.textContent = textoOriginalBtn;
+  }
 }
 
 async function entrarNoPainel(cargoSolicitado){
   document.getElementById("tela-login").style.display = "none";
   document.getElementById("tela-painel").style.display = "block";
   document.getElementById("btn-chat-fab").classList.add("visivel");
+  document.getElementById("atalho-rapido").classList.add("visivel");
   preencherData();
   if(firebaseOk){
     await prepararCargoUsuario(cargoSolicitado || null);
@@ -1136,7 +1256,7 @@ function escutarMeuUsuario(){
     sessionStorage.removeItem("cargasPiso_cargoSolicitado");
     alert("Você foi removido do painel por um administrador.");
     location.reload();
-  });
+  }, err=> console.error("Erro ao escutar meu usuário:", err));
 }
 
 // Cria o registro do usuário na primeira vez que ele entra (cargo padrão:
@@ -1233,7 +1353,7 @@ function escutarPresenca(){
       inativos.forEach(ref=> lote.delete(ref));
       lote.commit().catch(()=>{});
     }
-  });
+  }, err=> console.error("Erro ao escutar presença:", err));
 }
 
 function renderizarOnline(){
@@ -1254,7 +1374,7 @@ function escutarUsuarios(){
       mapaCargos[doc.id] = d.cargo || CARGO_PADRAO;
     });
     renderizarOnline(); // já atualiza a lista online e, se ADM, a lista de gerenciamento
-  });
+  }, err=> console.error("Erro ao escutar usuários:", err));
 }
 
 function renderizarListaAdmin(linhas){
@@ -1413,59 +1533,77 @@ function classeStatus(status){
   return "";
 }
 
+// Constrói uma <tr> completa (inputs editáveis, select de status, botão de
+// remover) para uma carga. Usado tanto na tabela em grade única quanto nas
+// duas tabelas da vista em colunas — cada chamada cria seus próprios
+// elementos/listeners, então editar em qualquer uma das vistas salva normal.
+function criarLinhaCarga(linha, linhasPiso){
+  const tr = document.createElement("tr");
+  tr.dataset.id = linha.id;
+
+  COLUNAS.forEach(col=>{
+    const td = document.createElement("td");
+    td.setAttribute("data-label", RENOMEAR_COLUNAS[col]);
+    if(col === "status"){
+      td.className = classeStatus(linha.status);
+      const sel = document.createElement("select");
+      sel.className = "cel";
+      STATUS_OPCOES.forEach(op=>{
+        const o = document.createElement("option");
+        o.value = op; o.textContent = op;
+        if(op === linha.status) o.selected = true;
+        sel.appendChild(o);
+      });
+      sel.addEventListener("change", ()=> salvarCampo(linha.id, "status", sel.value));
+      td.appendChild(sel);
+    } else {
+      if(col === "volume" || col === "sku" || col === "d1") td.className = "col-num";
+      const inp = document.createElement("input");
+      inp.className = "cel";
+      inp.value = linha[col] || "";
+      inp.addEventListener("focus", ()=> celulaEmEdicao = linha.id+"-"+col);
+      inp.addEventListener("blur", ()=>{ celulaEmEdicao = null; salvarCampo(linha.id, col, inp.value); });
+      inp.addEventListener("keydown", e=>{ if(e.key==="Enter") inp.blur(); });
+      inp.addEventListener("paste", e=> tratarColagem(e, linha.id, col, linhasPiso));
+      td.appendChild(inp);
+    }
+    tr.appendChild(td);
+  });
+
+  const tdRem = document.createElement("td");
+  tdRem.className = "col-remover";
+  tdRem.setAttribute("data-label", "Remover");
+  tdRem.innerHTML = `<button class="btn-remover" title="Remover carga">✕</button>`;
+  tdRem.querySelector("button").addEventListener("click", ()=> removerLinha(linha.id));
+  tr.appendChild(tdRem);
+
+  return tr;
+}
+
 function renderizarTabela(linhas){
   linhasCargasAtual = linhas; // mantém todas (inclusive já distribuídas) para a grade de distribuição
   const linhasPiso = linhas.filter(l=> !l.distribuido); // carga distribuída sai da lista de "Cargas no Piso"
   const corpo = document.getElementById("corpo-tabela");
+  const corpoOutras = document.getElementById("corpo-tabela-outras");
+  const corpoEtiquetadas = document.getElementById("corpo-tabela-etiquetadas");
   corpo.innerHTML = "";
+  corpoOutras.innerHTML = "";
+  corpoEtiquetadas.innerHTML = "";
 
   let totalVolume = 0, totalSku = 0, totalEtiquetadas = 0;
 
   linhasPiso.forEach(linha=>{
     totalVolume += Number(linha.volume) || 0;
     totalSku += Number(linha.sku) || 0;
-    if(linha.status === "CARGA ETIQUETADA") totalEtiquetadas++;
+    const etiquetada = linha.status === "CARGA ETIQUETADA";
+    if(etiquetada) totalEtiquetadas++;
 
-    const tr = document.createElement("tr");
-    tr.dataset.id = linha.id;
-
-    COLUNAS.forEach(col=>{
-      const td = document.createElement("td");
-      td.setAttribute("data-label", RENOMEAR_COLUNAS[col]);
-      if(col === "status"){
-        td.className = classeStatus(linha.status);
-        const sel = document.createElement("select");
-        sel.className = "cel";
-        STATUS_OPCOES.forEach(op=>{
-          const o = document.createElement("option");
-          o.value = op; o.textContent = op;
-          if(op === linha.status) o.selected = true;
-          sel.appendChild(o);
-        });
-        sel.addEventListener("change", ()=> salvarCampo(linha.id, "status", sel.value));
-        td.appendChild(sel);
-      } else {
-        if(col === "volume" || col === "sku" || col === "d1") td.className = "col-num";
-        const inp = document.createElement("input");
-        inp.className = "cel";
-        inp.value = linha[col] || "";
-        inp.addEventListener("focus", ()=> celulaEmEdicao = linha.id+"-"+col);
-        inp.addEventListener("blur", ()=>{ celulaEmEdicao = null; salvarCampo(linha.id, col, inp.value); });
-        inp.addEventListener("keydown", e=>{ if(e.key==="Enter") inp.blur(); });
-        inp.addEventListener("paste", e=> tratarColagem(e, linha.id, col, linhasPiso));
-        td.appendChild(inp);
-      }
-      tr.appendChild(td);
-    });
-
-    const tdRem = document.createElement("td");
-    tdRem.className = "col-remover";
-    tdRem.setAttribute("data-label", "Remover");
-    tdRem.innerHTML = `<button class="btn-remover" title="Remover carga">✕</button>`;
-    tdRem.querySelector("button").addEventListener("click", ()=> removerLinha(linha.id));
-    tr.appendChild(tdRem);
-
-    corpo.appendChild(tr);
+    corpo.appendChild(criarLinhaCarga(linha, linhasPiso));
+    if(etiquetada){
+      corpoEtiquetadas.appendChild(criarLinhaCarga(linha, linhasPiso));
+    } else {
+      corpoOutras.appendChild(criarLinhaCarga(linha, linhasPiso));
+    }
   });
 
   document.getElementById("r-total-cargas").textContent = linhasPiso.length;
@@ -1474,10 +1612,36 @@ function renderizarTabela(linhas){
   document.getElementById("r-sku").textContent = totalSku.toLocaleString("pt-BR");
   document.getElementById("f-volume").textContent = totalVolume.toLocaleString("pt-BR");
   document.getElementById("f-sku").textContent = totalSku.toLocaleString("pt-BR");
+  document.getElementById("contagem-outras").textContent = linhasPiso.length - totalEtiquetadas;
+  document.getElementById("contagem-etiquetadas").textContent = totalEtiquetadas;
 
   renderizarSelecaoDistribuicao(linhas);
   renderizarGradeDistribuicao(linhas);
 }
+
+/* ---------------------- VISUALIZAÇÃO: GRADE ÚNICA x 2 COLUNAS ---------------------- */
+// Cada produtivo escolhe como prefere ver a lista de "Cargas no Piso"; a
+// escolha fica salva neste dispositivo (não precisa ser igual pra todo mundo).
+let vistaPisoAtual = localStorage.getItem("cargasPiso_vistaPiso") || "grade";
+
+function aplicarVistaPiso(){
+  const ehColunas = vistaPisoAtual === "colunas";
+  document.getElementById("vista-grade-wrap").style.display = ehColunas ? "none" : "block";
+  document.getElementById("vista-colunas-wrap").style.display = ehColunas ? "flex" : "none";
+  document.getElementById("btn-vista-grade").classList.toggle("ativo", !ehColunas);
+  document.getElementById("btn-vista-colunas").classList.toggle("ativo", ehColunas);
+}
+document.getElementById("btn-vista-grade").addEventListener("click", ()=>{
+  vistaPisoAtual = "grade";
+  localStorage.setItem("cargasPiso_vistaPiso", vistaPisoAtual);
+  aplicarVistaPiso();
+});
+document.getElementById("btn-vista-colunas").addEventListener("click", ()=>{
+  vistaPisoAtual = "colunas";
+  localStorage.setItem("cargasPiso_vistaPiso", vistaPisoAtual);
+  aplicarVistaPiso();
+});
+aplicarVistaPiso();
 
 function salvarCampo(id, campo, valor){
   if(!firebaseOk) return;
@@ -1789,7 +1953,7 @@ function escutarPendencias(){
     pendenciasAtual = novoDado;
     renderizarPendencias();
     primeiraPendSnapshot = false;
-  });
+  }, err=> console.error("Erro ao escutar pendências:", err));
 }
 
 // Marca (ou desmarca) uma linha de pendência de agrupamento cross como
@@ -1950,7 +2114,11 @@ function comLabelExpira(criadoEm){
 }
 
 function escutarComentarios(){
-  if(!firebaseOk) return;
+  if(!firebaseOk){
+    const cont = document.getElementById("chat-mensagens");
+    if(cont) cont.innerHTML = '<div class="chat-vazio">Sem conexão com o servidor.</div>';
+    return;
+  }
   if(unsubComentarios) unsubComentarios();
   unsubComentarios = db.collection("comentarios").orderBy("criadoEm").limitToLast(200)
     .onSnapshot(snap=>{
@@ -2013,6 +2181,14 @@ setInterval(()=>{
   }
 }, 60000);
 
+/* ---------------------- ATALHO RÁPIDO DE NAVEGAÇÃO ---------------------- */
+document.querySelectorAll(".atalho-item").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    const alvo = document.getElementById(btn.dataset.alvo);
+    if(alvo) alvo.scrollIntoView({behavior:"smooth", block:"start"});
+  });
+});
+
 document.getElementById("btn-chat-fab").addEventListener("click", ()=>{
   const painel = document.getElementById("painel-chat");
   const abrindo = !painel.classList.contains("aberto");
@@ -2030,7 +2206,10 @@ document.getElementById("btn-chat-fechar").addEventListener("click", ()=>{
 });
 document.getElementById("form-chat").addEventListener("submit", (e)=>{
   e.preventDefault();
-  if(!firebaseOk || !usuarioAtual) return;
+  if(!firebaseOk || !usuarioAtual){
+    alert("Sem conexão com o servidor — não é possível enviar mensagens agora.");
+    return;
+  }
   const input = document.getElementById("in-chat-texto");
   const texto = input.value.trim();
   if(!texto) return;
@@ -2084,17 +2263,41 @@ function escutarConfigTurno(){
     inFull.disabled = !podeDistribuir();
     inMix.disabled = !podeDistribuir();
     renderizarGradeDistribuicao(linhasCargasAtual);
-  });
+  }, err=> console.error("Erro ao escutar config do turno:", err));
 }
 
 function salvarConfigTurno(campo, valor){
   if(!firebaseOk || !podeDistribuir()) return;
   db.collection("configDistribuicao").doc(turnoSelecionado)
-    .set({[campo]: valor, atualizadoPor: usuarioAtual, atualizadoEm: Date.now()}, {merge:true});
+    .set({[campo]: valor, atualizadoPor: usuarioAtual, atualizadoEm: Date.now()}, {merge:true})
+    .catch(err=> console.error("Erro ao salvar config do turno:", err));
 }
-document.getElementById("in-qtd-produtivos").addEventListener("change", e=> salvarConfigTurno("qtdProdutivos", Number(e.target.value)||0));
-document.getElementById("in-estocado-full").addEventListener("change", e=> salvarConfigTurno("estocadoFull", e.target.value));
-document.getElementById("in-estocado-mix").addEventListener("change", e=> salvarConfigTurno("estocadoMix", e.target.value));
+
+// CORREÇÃO: Qtd. Produtivos / Estocado Full / Estocado Mix salvavam só no
+// evento "change" (quando o campo perde o foco). Em tablets/celulares isso
+// nem sempre dispara (ex.: a pessoa troca de aba ou fecha o teclado sem
+// tocar em outro campo), então o valor às vezes nunca chegava a ser
+// salvo — e por isso não entrava no cálculo do H/H nem aparecia nos
+// outros dispositivos. Agora o valor é: (1) aplicado localmente e
+// recalculado no H/H a cada tecla digitada, e (2) salvo no Firestore com
+// um pequeno atraso (debounce) enquanto a pessoa digita, e imediatamente
+// ao sair do campo — sem depender só do blur.
+let debounceConfigTurno = {qtdProdutivos:null, estocadoFull:null, estocadoMix:null};
+function atualizarConfigTurnoLocal(campo, valor){
+  configTurnoAtual[campo] = valor;
+  renderizarGradeDistribuicao(linhasCargasAtual); // recalcula H/H na hora, mesmo antes de sincronizar
+}
+function agendarSalvarConfigTurno(campo, valor, atraso){
+  atualizarConfigTurnoLocal(campo, valor);
+  clearTimeout(debounceConfigTurno[campo]);
+  debounceConfigTurno[campo] = setTimeout(()=> salvarConfigTurno(campo, valor), atraso);
+}
+document.getElementById("in-qtd-produtivos").addEventListener("input", e=> agendarSalvarConfigTurno("qtdProdutivos", Number(e.target.value)||0, 500));
+document.getElementById("in-estocado-full").addEventListener("input", e=> agendarSalvarConfigTurno("estocadoFull", e.target.value, 500));
+document.getElementById("in-estocado-mix").addEventListener("input", e=> agendarSalvarConfigTurno("estocadoMix", e.target.value, 500));
+document.getElementById("in-qtd-produtivos").addEventListener("change", e=>{ clearTimeout(debounceConfigTurno.qtdProdutivos); salvarConfigTurno("qtdProdutivos", Number(e.target.value)||0); });
+document.getElementById("in-estocado-full").addEventListener("change", e=>{ clearTimeout(debounceConfigTurno.estocadoFull); salvarConfigTurno("estocadoFull", e.target.value); });
+document.getElementById("in-estocado-mix").addEventListener("change", e=>{ clearTimeout(debounceConfigTurno.estocadoMix); salvarConfigTurno("estocadoMix", e.target.value); });
 
 /* ---------------------- NOTIFICAÇÕES (TOAST + SISTEMA OPERACIONAL) ---------------------- */
 // Toast dentro da página (sempre funciona) + notificação nativa do
@@ -2133,11 +2336,18 @@ function ehSafari(){
 // para cobrir quem já estava logado antes dessa função existir.
 let permissaoNotifJaPedida = false;
 function pedirPermissaoNotificacao(){
-  if(ehSafari()) return;
-  if(!("Notification" in window)) return;
-  if(Notification.permission === "default" && !permissaoNotifJaPedida){
-    permissaoNotifJaPedida = true;
-    Notification.requestPermission().finally(()=> atualizarBotaoNotif());
+  // Blindado: em alguns navegadores/webviews (apps que abrem o site
+  // embutido, políticas de permissão restritas, etc.) o simples acesso a
+  // "Notification" pode lançar um erro. Isso NUNCA pode travar o login.
+  try{
+    if(ehSafari()) return;
+    if(!("Notification" in window)) return;
+    if(Notification.permission === "default" && !permissaoNotifJaPedida){
+      permissaoNotifJaPedida = true;
+      Notification.requestPermission().finally(()=> atualizarBotaoNotif());
+    }
+  }catch(e){
+    console.error("Erro ao pedir permissão de notificação:", e);
   }
 }
 
@@ -2146,10 +2356,10 @@ function pedirPermissaoNotificacao(){
 // aberto). Requer permissão concedida — se negada ou ainda não decidida,
 // só o toast dentro da página é exibido.
 function mostrarNotificacaoNativa(titulo, corpo){
-  if(ehSafari()) return;
-  if(!("Notification" in window)) return;
-  if(Notification.permission !== "granted") return;
   try{
+    if(ehSafari()) return;
+    if(!("Notification" in window)) return;
+    if(Notification.permission !== "granted") return;
     const n = new Notification(titulo, {
       body: corpo || "",
       tag: "cargas-piso-" + Date.now(),
@@ -2166,30 +2376,40 @@ function mostrarNotificacaoNativa(titulo, corpo){
 function atualizarBotaoNotif(){
   const btn = document.getElementById("btn-notif-status");
   if(!btn) return;
-  if(ehSafari()){
-    btn.textContent = "🔕 Notificações não suportadas no Safari";
+  try{
+    if(ehSafari()){
+      btn.textContent = "🔕 Notificações não suportadas no Safari";
+      btn.disabled = true;
+      return;
+    }
+    if(!("Notification" in window)){
+      btn.textContent = "🔕 Notificações não suportadas neste navegador";
+      btn.disabled = true;
+      return;
+    }
+    if(Notification.permission === "granted"){
+      btn.textContent = "🔔 Notificações do sistema ativadas";
+      btn.disabled = true;
+    } else if(Notification.permission === "denied"){
+      btn.textContent = "🔕 Notificações bloqueadas — libere nas configurações do navegador";
+      btn.disabled = true;
+    } else {
+      btn.textContent = "🔔 Ativar notificações do sistema";
+      btn.disabled = false;
+    }
+  }catch(e){
+    console.error("Erro ao atualizar botão de notificação:", e);
+    btn.textContent = "🔕 Notificações indisponíveis";
     btn.disabled = true;
-    return;
-  }
-  if(!("Notification" in window)){
-    btn.textContent = "🔕 Notificações não suportadas neste navegador";
-    btn.disabled = true;
-    return;
-  }
-  if(Notification.permission === "granted"){
-    btn.textContent = "🔔 Notificações do sistema ativadas";
-    btn.disabled = true;
-  } else if(Notification.permission === "denied"){
-    btn.textContent = "🔕 Notificações bloqueadas — libere nas configurações do navegador";
-    btn.disabled = true;
-  } else {
-    btn.textContent = "🔔 Ativar notificações do sistema";
-    btn.disabled = false;
   }
 }
 document.getElementById("btn-notif-status").addEventListener("click", ()=>{
-  if(ehSafari() || !("Notification" in window)) return;
-  Notification.requestPermission().finally(atualizarBotaoNotif);
+  try{
+    if(ehSafari() || !("Notification" in window)) return;
+    Notification.requestPermission().finally(atualizarBotaoNotif);
+  }catch(e){
+    console.error("Erro ao pedir permissão de notificação:", e);
+  }
 });
 atualizarBotaoNotif();
 
@@ -2527,6 +2747,19 @@ document.getElementById("btn-grade-imprimir").addEventListener("click", ()=> imp
 </script>
 <!-- ===================== COMENTÁRIOS (CHAT FLUTUANTE, COMPARTILHADO) ===================== -->
 <button id="btn-chat-fab" class="chat-fab" title="Comunicador">💬</button>
+
+<!-- ===================== ATALHO RÁPIDO DE NAVEGAÇÃO ===================== -->
+<nav id="atalho-rapido" class="atalho-rapido">
+  <button type="button" class="atalho-item" data-alvo="secao-piso" title="Ir para Cargas no Piso">
+    <span class="atalho-icone">📋</span><span class="atalho-texto">Cargas no Piso</span>
+  </button>
+  <button type="button" class="atalho-item" data-alvo="secao-grade" title="Ir para Grade de Distribuição">
+    <span class="atalho-icone">📦</span><span class="atalho-texto">Grade de Distribuição</span>
+  </button>
+  <button type="button" class="atalho-item" data-alvo="secao-pend" title="Ir para Pendências">
+    <span class="atalho-icone">⏳</span><span class="atalho-texto">Pendências</span>
+  </button>
+</nav>
 <div id="painel-chat" class="chat-painel">
   <div class="chat-cabecalho">
     <span>Comunicador<span class="sub">mensagens somem após 7h</span></span>
